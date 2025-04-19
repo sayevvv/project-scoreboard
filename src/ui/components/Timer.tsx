@@ -1,8 +1,15 @@
-// components/Timer.tsx
 import { useEffect, useState } from 'react';
 
-export default function Timer() {
-  const [seconds, setSeconds] = useState(1172); // 19 * 60 + 32
+type Props = {
+  duration: number;
+};
+
+export default function Timer({ duration }: Props) {
+  const [seconds, setSeconds] = useState(duration);
+
+  useEffect(() => {
+    setSeconds(duration);
+  }, [duration]);
 
   useEffect(() => {
     const interval = setInterval(() => {
