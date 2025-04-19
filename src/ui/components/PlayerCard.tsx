@@ -22,12 +22,13 @@ export default function PlayerCard({ name, score, setScore, gradient }: Props) {
         {[...Array(6)].map((_, idx) => (
           <div
             key={idx}
-            className={`w-7 h-4 rounded-full ${
-              idx < fouls ? "bg-red-500" : "border-gray-400"
+            className={`w-7 h-4 rounded-full border ${
+              idx < fouls ? "bg-red-500 border-red-500" : "border-gray-400"
             }`}
           ></div>
         ))}
       </div>
+
       <div className="flex gap-2 mb-2">
         {[1, 2, 3].map((val) => (
           <button
