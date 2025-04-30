@@ -6,17 +6,25 @@ import SetupModal from './components/SetupModal';
 export default function App() {
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
+  const [maxScore, setMaxScore] = useState(50);
+  const [maxFoul, setMaxFoul] = useState(0);
   const [player1, setPlayer1] = useState("Pemain 1");
   const [player2, setPlayer2] = useState("Pemain 2");
+  const [playerFrom1, setFrom1] = useState("Tim 1");
+  const [playerFrom2, setFrom2] = useState("Tim 2");
   const [duration, setDuration] = useState(1200); // default 20 mins
   const [showSetup, setShowSetup] = useState(true);
 
   if (showSetup) {
     return (
       <SetupModal
-        onSubmit={({ name1, name2, time }) => {
+        onSubmit={({ name1, name2, from1, from2, score, fouls, time }) => {
           setPlayer1(name1);
           setPlayer2(name2);
+          setMaxScore(score);
+          setMaxFoul(fouls);
+          setFrom1(from1);
+          setFrom2(from2);
           setDuration(time * 60);
           setShowSetup(false);
         }}

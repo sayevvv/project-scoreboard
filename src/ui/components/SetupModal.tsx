@@ -4,6 +4,8 @@ type Props = {
   onSubmit: (values: {
     name1: string;
     name2: string;
+    from1: string;
+    from2: string;
     time: number;
     fouls: number;
     score: number;
@@ -199,7 +201,7 @@ export default function SetupModal({ onSubmit }: Props) {
           </div>
         </div>
         <button
-          onClick={() => onSubmit({ name1, name2, time, fouls, score })}
+          onClick={() => onSubmit({ name1, name2, from1, from2, time, fouls, score })}
           className="bg-gradient-to-t from-15% from-blue-500 to-blue-950 px-5 text-white py-3 rounded-4xl"
         >
           Mulai Permainan
