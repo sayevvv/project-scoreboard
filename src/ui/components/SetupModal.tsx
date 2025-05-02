@@ -25,27 +25,27 @@ export default function SetupModal({ onSubmit }: Props) {
     <>
       <div className="min-h-screen flex flex-col items-center justify-center bg-black bg-opacity-60 fixed inset-0 z-50 gap-5">
         <header>
-          <h2 className="text-2xl font-bold mb-4 text-center text-white">
+          <h2 className="text-2xl font-bold mb-3 text-center text-white">
             Setup Pertandingan
           </h2>
           <p className="text-sm text-gray-400 text-center mb-4">
-            Silakan isi nama pemain dan waktu pertandingan
+            Silakan atur pertandingan sesuai keinginan Anda.
           </p>
         </header>
         <div className="bg-black rounded-xl p-8 w-full shadow-lg max-w-2xl border-white border-2 text-white">
           <div className="flex flex-col gap-4">
             <section className="flex flex-col gap-4 justify-center items-center">
               {/* Waktu Maksimal */}
-              <label className="flex flex-col items-center justify-center text-white text-center w-full">
+              <label className="flex flex-col items-center justify-center text-white text-center w-fit">
                 Waktu Maksimal
-                <div className="flex items-center justify-center gap-2 mt-2 select-none">
+                <div className="flex items-center justify-center gap-2 mt-2 select-none relative">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setTime((prev) => Math.max(prev - 1, 0));
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10"
                   >
                     –
                   </button>
@@ -67,7 +67,7 @@ export default function SetupModal({ onSubmit }: Props) {
                       e.stopPropagation();
                       setTime((prev) => prev + 1);
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition"
                   >
                     +
                   </button>
@@ -75,7 +75,7 @@ export default function SetupModal({ onSubmit }: Props) {
               </label>
 
               {/* Skor Maksimal */}
-              <label className="flex flex-col items-center justify-center text-white text-center w-full">
+              <label className="flex flex-col items-center justify-center text-white text-center">
                 Skor Maksimal
                 <div className="flex items-center justify-center gap-2 mt-2 select-none">
                   <button
@@ -84,7 +84,7 @@ export default function SetupModal({ onSubmit }: Props) {
                       e.stopPropagation();
                       setScore((prev) => Math.max(prev - 1, 0));
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10"
                   >
                     –
                   </button>
@@ -106,7 +106,7 @@ export default function SetupModal({ onSubmit }: Props) {
                       e.stopPropagation();
                       setScore((prev) => prev + 1);
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10"
                   >
                     +
                   </button>
@@ -114,7 +114,7 @@ export default function SetupModal({ onSubmit }: Props) {
               </label>
 
               {/* Pelanggaran Maksimal */}
-              <label className="flex flex-col items-center justify-center text-white text-center w-full">
+              <label className="flex flex-col items-center justify-center text-white text-center">
                 Pelanggaran Maksimal{" "}
                 <span className="text-sm text-gray-400">(opsional)</span>
                 <div className="flex items-center justify-center gap-2 mt-2 select-none">
@@ -124,7 +124,7 @@ export default function SetupModal({ onSubmit }: Props) {
                       e.stopPropagation();
                       setFouls((prev) => Math.max(prev - 1, 0));
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10"
                   >
                     –
                   </button>
@@ -146,7 +146,7 @@ export default function SetupModal({ onSubmit }: Props) {
                       e.stopPropagation();
                       setFouls((prev) => prev + 1);
                     }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-red-950 text-white rounded-full transition z-10"
+                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10"
                   >
                     +
                   </button>
@@ -172,7 +172,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     placeholder="opsional"
                     value={from1}
                     onChange={(e) => setFrom1(e.target.value)}
-                    className="px-4 py-2 rounded-2xl bg-slate-950 text-white"
+                    className="px-4 py-2 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white hover:bg-gradient-to-r"
                   />
                 </label>
               </div>
@@ -183,7 +183,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     type="text"
                     value={name2}
                     onChange={(e) => setName2(e.target.value)}
-                    className="px-4 py-2 rounded-2xl bg-gradient-to-r from-5% from-slate-950 to-blue-950 text-white"
+                    className="px-4 py-2 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white"
                   />
                 </label>
                 <label className="flex flex-col text-white w-full">
@@ -193,7 +193,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     placeholder="opsional"
                     value={from2}
                     onChange={(e) => setFrom2(e.target.value)}
-                    className="px-4 py-2 rounded-2xl bg-slate-950 text-white"
+                    className="px-4 py-2 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white hover:bg-gradient-to-r"
                   />
                 </label>
               </div>
