@@ -3,6 +3,7 @@ import './App.css';
 import PlayerCard from './components/PlayerCard';
 import Timer from './components/Timer';
 import SetupModal from './components/SetupModal';
+import SplashScreen from './components/SplashScreen';
 
 // Helper function to format time (can be shared or kept here)
 const formatTime = (seconds: number): string => {
@@ -14,8 +15,15 @@ const formatTime = (seconds: number): string => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+const SPLASH_VISIBLE_DURATION = 1500; // 2 detik splash terlihat jelas
+const FADE_DURATION = 800;         
+
 
 export default function App() {
+     // --- Splash Screen State ---
+     const [isSplashVisible, setIsSplashVisible] = useState(true);
+     const [isSplashFading, setIsSplashFading] = useState(false);
+
     // --- Game Setup States ---
     const [maxScore, setMaxScore] = useState(50);
     const [maxFoul, setMaxFoul] = useState(5);
@@ -44,6 +52,27 @@ export default function App() {
     const [showSetup, setShowSetup] = useState(true);
     // New state for confirmation alert
     const [showEndConfirmation, setShowEndConfirmation] = useState(false);
+
+    // --- useEffect untuk Mengelola Splash Screen ---
+    useEffect(() => {
+        // Timer untuk mulai fade-out
+        const fadeTimer = setTimeout(() => {
+          setIsSplashFading(true); // Memicu animasi fade-out
+  
+          // Timer untuk benar-benar menyembunyikan splash screen setelah fade selesai
+          const unmountTimer = setTimeout(() => {
+            setIsSplashVisible(false); // Splash screen tidak dirender lagi
+          }, FADE_DURATION); // Tunggu sesuai durasi fade
+  
+          // Cleanup untuk unmountTimer jika komponen App unmount sebelum selesai
+          return () => clearTimeout(unmountTimer);
+  
+        }, SPLASH_VISIBLE_DURATION); // Tunggu sebelum mulai fade
+  
+        // Cleanup untuk fadeTimer jika komponen App unmount sebelum selesai
+        return () => clearTimeout(fadeTimer);
+  
+      }, []); // [] berarti hanya dijalankan sekali saat mount
 
     // --- Game Logic Functions ---
 
@@ -263,6 +292,10 @@ export default function App() {
     }, []);
 
     // --- Render Logic ---
+    if (isSplashVisible) {
+        // Selama splash screen masih harus terlihat (termasuk saat fading)
+        return <SplashScreen isFading={isSplashFading} />;
+    }
 
     if (showSetup) {
         return <SetupModal onSubmit={handleSetupSubmit} />;
