@@ -5,7 +5,8 @@
   ],
   "icon": "./desktopIcon.png",
   "mac": {
-    "target": "dmg"
+    "target": "dmg",
+    "category": "public.app-category.utilities"
   },
   "linux": {
     "target": "AppImage",
@@ -13,5 +14,6 @@
   },
   "win" : {
     "target": ["portable", "msi"]
-  }
+  },
+  "publish": null
 }
