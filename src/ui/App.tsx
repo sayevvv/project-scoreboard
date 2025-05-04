@@ -240,7 +240,7 @@ export default function App() {
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isRunning, timeLeft, gameEnded, initialDuration, score1, score2, player1, player2, endGame]); // Added dependencies
+    }, [isRunning, gameEnded, initialDuration, timeLeft]); // Added dependencies
 
     // Effect to reset timer display when initialDuration changes (new game setup)
     useEffect(() => {
