@@ -15,9 +15,5 @@
   "win" : {
     "target": ["portable", "msi"]
   },
-  "publish": [
-    {
-      "provider": "github"
-    }
-  ]
+  "publish":null
 }
