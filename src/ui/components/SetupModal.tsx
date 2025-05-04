@@ -18,21 +18,21 @@ export default function SetupModal({ onSubmit }: Props) {
   const [from1, setFrom1] = useState("");
   const [from2, setFrom2] = useState("");
   const [fouls, setFouls] = useState(5);
-  const [score, setScore] = useState(50);
-  const [time, setTime] = useState(20);
+  const [score, setScore] = useState(100);
+  const [time, setTime] = useState(5);
 
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center bg-black bg-opacity-60 fixed inset-0 z-50 gap-5">
         <header>
-          <h2 className="text-2xl font-bold mb-3 text-center text-white">
+          <h2 className="karantina-bold text-6xl font-bold mb-3 text-center text-white">
             Setup Pertandingan
           </h2>
           <p className="text-sm text-gray-400 text-center mb-4">
             Silakan atur pertandingan sesuai keinginan Anda.
           </p>
         </header>
-        <div className="bg-black rounded-xl p-8 w-full shadow-lg max-w-2xl border-white border-2 text-white">
+        <div className="bg-gray-950 rounded-xl p-8 w-full shadow-lg max-w-2xl border-white border-1 text-white">
           <div className="flex flex-col gap-4">
             <section className="flex flex-col gap-4 justify-center items-center">
               {/* Waktu Maksimal */}
@@ -202,7 +202,7 @@ export default function SetupModal({ onSubmit }: Props) {
         </div>
         <button
           onClick={() => onSubmit({ name1, name2, from1, from2, time, fouls, score })}
-          className="bg-gradient-to-t from-15% from-blue-500 to-blue-950 px-5 text-white py-3 rounded-4xl"
+          className="mb-4 px-4 py-2 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition"
         >
           Mulai Permainan
         </button>

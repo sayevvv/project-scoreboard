@@ -11,21 +11,21 @@ body,
 
 @font-face {
   font-family: 'Karantina';
-  src: url('./assets/fonts/karantina/Karantina-Regular.ttf') format('truetype');
-  font-weight: 400;
+  src: url('/fonts/Karantina-Regular.ttf') format('truetype');
+  font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Karantina';
-  src: url('./assets/fonts/karantina/Karantina-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Karantina';
-  src: url('./assets/fonts/karantina/Karantina-Light.ttf') format('truetype');
+  src: url('/fonts/Karantina-Light.ttf') format('truetype');
   font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Karantina';
+  src: url('/fonts/Karantina-Bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
 }

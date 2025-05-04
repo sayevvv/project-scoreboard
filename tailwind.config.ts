@@ -8,10 +8,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        karantina: ['"Karantina"', 'cursive'],
+        karantina: ['"Karantina"', 'cursive'], // Menambahkan font Karantina
       },
     },
   },
   plugins: [],
 }
+
 export default config
