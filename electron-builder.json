@@ -1,19 +1,24 @@
 {
   "appId": "com.basayev.scoreboard",
+  "productName": "Scoreboard", 
   "files": [
-    "dist-electron", "dist-react"
+    "dist-electron/**/*",
+    "dist-react/**/*"
   ],
+  "directories": {
+    "output": "dist"
+  },
   "icon": "./desktopIcon.png",
   "mac": {
-    "target": "dmg",
+    "target": ["dmg"],
     "category": "public.app-category.utilities"
   },
-  "linux": {
-    "target": "AppImage",
-    "category": "Utility"
-  },
-  "win" : {
+  "win": {
     "target": ["portable", "msi"]
   },
-  "publish":null
+  "linux": {
+    "target": ["AppImage"],
+    "category": "Utility"
+  },
+  "publish": null
 }
