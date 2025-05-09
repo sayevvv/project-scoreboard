@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# 🥋 Akai Dojo Scoreboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Akai Dojo Scoreboard** adalah aplikasi desktop modern untuk mencatat dan menampilkan skor pertandingan bela diri secara real-time. Dirancang untuk keperluan dojo dan turnamen, aplikasi ini memberikan pengalaman pencatatan skor yang cepat, jelas, dan efisien.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 Fitur Utama
 
-## Expanding the ESLint configuration
+- Tampilan skor yang bersih dan mudah dibaca
+- Kontrol pertandingan yang praktis dan responsif
+- Dukungan untuk berbagai jenis pertandingan
+- Mode fullscreen untuk layar besar
+- Ringan dan cepat berkat teknologi modern (Vite + React + Electron)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 💻 Unduh Aplikasi
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+> 📥 Unduh dan jalankan aplikasi di perangkat Anda:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- 🔵 [Windows 64-bit](https://github.com/sayevvv/project-scoreboard/releases/download/v0.0.6/Scoreboard.0.0.6.exe) 
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---
+
+## 🌐 Akses Versi Web (Jika Tersedia)
+
+> Anda juga dapat menggunakan aplikasi secara langsung melalui browser:
+
+🔗 [Akses Versi Web](https://akaidojo-scoreboard.vercel.app/)
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+- [Vite](https://vitejs.dev/) — Superfast build tool
+- [React](https://reactjs.org/) — UI framework
+- [TypeScript](https://www.typescriptlang.org/) — Type-safe JavaScript
+- [Electron](https://www.electronjs.org/) — Desktop app framework
+
