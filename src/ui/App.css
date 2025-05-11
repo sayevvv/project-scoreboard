@@ -19,6 +19,17 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../public/fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+}
+
+.montserrat {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
 .karantina-light {
   font-family: 'Karantina', sans-serif;
   font-weight: 300;
@@ -33,3 +44,4 @@
   font-family: 'Karantina', sans-serif;
   font-weight: 700;
 }
+

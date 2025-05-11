@@ -1,17 +1,17 @@
 import { useState } from 'react';
 
 type Props = {
-    timeLeft: number;             // Receive timeLeft from App
-    isRunning: boolean;           // Receive isRunning from App
-    initialDuration: number;      // Receive initial duration for reset
-    setTimeLeft: (value: number | ((prev: number) => number)) => void; // Setter from App
-    setIsRunning: (value: boolean | ((prev: boolean) => boolean)) => void; // Setter from App
-    disabled?: boolean;           // To disable controls externally (e.g., game ended)
-    onNewGame?: () => void;       // Callback for new game button
-    onTimerFirstStart?: () => void; // NEW: Callback when timer starts for the first time
+    timeLeft: number;
+    isRunning: boolean;
+    initialDuration: number;
+    setTimeLeft: (value: number | ((prev: number) => number)) => void;
+    setIsRunning: (value: boolean | ((prev: boolean) => boolean)) => void;
+    disabled?: boolean;
+    onNewGame?: () => void;
+    onTimerFirstStart?: () => void;
 };
 
-// Helper function to format time (can be removed if App has its own)
+// Fungsi bantuan untuk format waktu
 const formatTime = (seconds: number): string => {
     if (isNaN(seconds) || seconds < 0) {
         return "00:00";
@@ -21,7 +21,6 @@ const formatTime = (seconds: number): string => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
-
 export default function Timer({
     timeLeft,
     isRunning,
@@ -30,48 +29,37 @@ export default function Timer({
     setIsRunning,
     disabled = false,
     onNewGame,
-    onTimerFirstStart // Receive the new prop
+    onTimerFirstStart
 }: Props) {
-    // New state for confirmation alerts
     const [showResetConfirmation, setShowResetConfirmation] = useState(false);
     const [showNewGameConfirmation, setShowNewGameConfirmation] = useState(false);
 
-    // Toggle timer Play/Pause
     const toggleTimer = () => {
         if (!disabled) {
-            // If timer is not running and is about to start, trigger the callback
             if (!isRunning && timeLeft > 0 && onTimerFirstStart) {
-                 onTimerFirstStart(); // Notify App that timer has started at least once
+                onTimerFirstStart();
             }
-
-            // If time is up and we press play again, reset time (optional, App handles this better now)
-            // if (timeLeft <= 0 && !isRunning) {
-            //     setTimeLeft(initialDuration);
-            // }
-
-            setIsRunning(prev => !prev); // Toggle running state via App's setter
+            setIsRunning(prev => !prev);
         }
     };
 
-    // Function to reset timer to the initial duration (when paused)
     const handleReset = () => {
-        if (!disabled && !isRunning) { // Only allow reset when paused
+        if (!disabled && !isRunning) {
             setTimeLeft(initialDuration);
-            setShowResetConfirmation(false); // Close confirmation dialog
+            setShowResetConfirmation(false);
         }
     };
 
-    // Function to handle new game confirmation
     const handleNewGame = () => {
         if (onNewGame) {
             onNewGame();
-            setShowNewGameConfirmation(false); // Close confirmation dialog
+            setShowNewGameConfirmation(false);
         }
     };
 
     return (
         <>
-            {/* Reset Timer Confirmation Alert */}
+            {/* Alert Konfirmasi Reset Timer */}
             {showResetConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
                     <div className="bg-gray-900 p-6 rounded-xl text-center max-w-md w-full shadow-2xl border border-gray-700">
@@ -95,7 +83,7 @@ export default function Timer({
                 </div>
             )}
 
-            {/* New Game Confirmation Alert */}
+            {/* Alert Konfirmasi Game Baru */}
             {showNewGameConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
                     <div className="bg-gray-900 p-6 rounded-xl text-center max-w-md w-full shadow-2xl border border-gray-700">
@@ -119,59 +107,62 @@ export default function Timer({
                 </div>
             )}
 
-            <div className={`flex justify-between items-center w-full max-w-md mx-auto text-center py-2 px-4 rounded-full bg-gray-900 text-white shadow-lg border border-gray-700 ${disabled ? 'opacity-70' : ''}`}>
-                {/* Time Display */}
-                <div className="text-2xl sm:text-3xl font-mono px-4 sm:px-6 py-2">
+            {/* BARU: Kontainer Utama Timer dengan flex-col */}
+            <div className={`flex flex-col items-center w-full max-w-xl mx-auto text-center py-3 ${disabled ? 'opacity-70' : ''}`}>
+                {/* Tampilan Waktu (diperbesar) */}
+                <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-mono font-bold text-white mb-4 px-4 py-2 bg-gray-900 rounded-xl shadow-lg border border-gray-700 w-auto min-w-[200px] sm:min-w-[250px] md:min-w-[300px]">
                     {formatTime(timeLeft)}
                 </div>
 
-                {/* Button Controls Area */}
-                <div className="flex items-center gap-2">
-                    {/* Main Play/Pause Button */}
+                {/* Area Kontrol Tombol (di bawah waktu) */}
+                <div className={`flex items-center justify-center gap-2 sm:gap-3 md:gap-4 p-3 rounded-full bg-gray-900 shadow-lg border border-gray-700 w-auto`}>
+                    {/* Tombol Play/Pause Utama */}
                     <button
                         onClick={toggleTimer}
-                        // Disable if externally disabled OR if time is 0 and not running
                         disabled={disabled || (timeLeft <= 0 && !isRunning)}
                         title={isRunning ? "Jeda" : "Mulai"}
-                        className={`p-2 rounded-full text-base sm:text-lg font-semibold transition duration-200 ease-in-out ${
+                        className={`p-2 sm:p-3 rounded-full text-base sm:text-lg font-semibold transition duration-200 ease-in-out ${
                             isRunning
                                 ? "bg-orange-500 hover:bg-orange-600 active:bg-orange-700"
                                 : "bg-green-500 hover:bg-green-600 active:bg-green-700"
                         } text-white ${disabled || (timeLeft <= 0 && !isRunning) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
                         {isRunning ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v4a1 1 0 11-2 0V8z" clipRule="evenodd" />
                             </svg>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                             </svg>
                         )}
                     </button>
 
-                    {/* Reset and New Game Buttons (only show when paused, time > 0, and not disabled) */}
+                    {/* Tombol Reset dan Game Baru (hanya tampil saat dijeda, waktu > 0, dan tidak disabled) */}
                     {!isRunning && timeLeft > 0 && !disabled && (
                         <>
-                            {/* Reset Time Button */}
+                            {/* Tombol Reset Waktu */}
                             <button
                                 onClick={() => setShowResetConfirmation(true)}
                                 title="Reset Waktu"
-                                className="p-2 rounded-full bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 text-white transition duration-200 ease-in-out"
+                                className="p-2 sm:p-3 rounded-full bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700 text-white transition duration-200 ease-in-out"
                             >
-                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l5 5M20 20l-5-5M4 20h5v-5M20 4h-5v5" />
+                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l5 5M20 20l-5-5M4 20h5v-5M20 4h-5v5" /> {/* Ini ikon reset yang lebih umum, bisa diganti jika ada yang lebih sesuai */}
+                                    {/* Alternatif ikon reset (lebih mirip refresh):
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2M15 15h-5.418" />
+                                    */}
                                 </svg>
                             </button>
 
-                            {/* New Game Button */}
+                            {/* Tombol Game Baru */}
                             {onNewGame && (
                                 <button
                                     onClick={() => setShowNewGameConfirmation(true)}
                                     title="Game Baru"
-                                    className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition duration-200 ease-in-out"
+                                    className="p-2 sm:p-3 rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition duration-200 ease-in-out"
                                 >
-                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </button>

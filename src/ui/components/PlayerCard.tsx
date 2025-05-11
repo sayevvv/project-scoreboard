@@ -1,18 +1,20 @@
 import { useState } from 'react';
 
-// Define the Props type to include addScore and addFoul
+// Definisikan tipe Props untuk menyertakan addScore, addFoul, dan isFirstScorer
 type Props = {
     name: string;
     from?: string;
     score: number;
     fouls: number;
     maxFoul: number;
-    setFouls: (val: number) => void; // Still needed for decrement/direct set
-    setScore: (val: number) => void; // Still needed for decrement/direct set
-    addScore: (points: number) => void; // NEW: Prop for adding score via App logic
-    addFoul: (change: number) => void;  // NEW: Prop for adding foul via App logic
+    setFouls: (val: number) => void;
+    setScore: (val: number) => void;
+    addScore: (points: number) => void;
+    addFoul: (change: number) => void;
     gradient: string;
+    gradient2?: string;
     disabled?: boolean;
+    isFirstScorer?: boolean; // BARU: Prop untuk indikator skor pertama
 };
 
 export default function PlayerCard({
@@ -21,51 +23,61 @@ export default function PlayerCard({
     score,
     fouls,
     maxFoul,
-    setFouls, // Keep for decrement
-    setScore, // Keep for decrement
-    addScore, // Destructure the new prop
-    addFoul,  // Destructure the new prop
+    setFouls,
+    setScore,
+    addScore,
+    addFoul,
     gradient,
+    gradient2,
     disabled = false,
+    isFirstScorer = false, // BARU: Destrukturisasi dengan nilai default false
 }: Props) {
     const [showControls, setShowControls] = useState(true);
 
     return (
-        <div className="flex flex-col items-center justify-center w-full md:w-auto">
-            {/* Player Name and Origin */}
-            <div className="flex flex-row items-center justify-between w-full px-4 md:px-0 mb-1">
-                <h2 className="text-[18px] sm:text-[24px] md:text-[30px] font-mono text-start mr-2 truncate">
-                    {name}
+        <div className="flex flex-col items-center justify-center w-full">
+            {/* Nama Pemain dan Asal */}
+            <div className={`flex flex-row items-center justify-between w-full px-4 bg-gradient-to-r ${gradient2} mb-2.5`}>
+                <h2 className="text-[40px] montserrat text-start mr-2">
+                    {name.toUpperCase()}
                 </h2>
-                {from && <p className="text-xs sm:text-sm md:text-lg text-gray-400 whitespace-nowrap">{from}</p>}
+                {from && <p className="text-[35px] text-white whitespace-nowrap">{from.toUpperCase()}</p>}
             </div>
 
-            {/* Score and Foul Display Card */}
+            {/* Kartu Tampilan Skor dan Pelanggaran */}
             <div
-                className={`flex flex-col items-center border-2 px-12 sm:px-16 md:px-24 py-4 md:py-8 rounded-lg shadow-lg bg-gradient-to-b ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full`}
+                className={`relative flex flex-col items-center border-2 px-12 py-0 rounded-lg shadow-lg bg-gradient-to-br ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full`}
             >
-                {/* Score */}
-                <div className="karantina-regular text-[100px] sm:text-[140px] md:text-[350px] font-bold bg-white bg-clip-text text-transparent leading-none mb-3">
+                {/* BARU: Indikator Skor Pertama */}
+                {isFirstScorer && (
+                    <div
+                        className="absolute top-2 right-2 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-green-500 rounded-md shadow-md border-2 border-green-300"
+                        title="Pencetak Skor Pertama"
+                    ></div>
+                )}
+
+                {/* Skor */}
+                <div className="karantina-regular text-[100px] sm:text-[140px] md:text-[500px] font-bold bg-white bg-clip-text text-transparent leading-none mb-4">
                     {score}
                 </div>
-
-                {/* Fouls Display */}
-                {maxFoul > 0 && (
-                    <div className="flex flex-col border rounded-md px-2 py-1 bg-[rgba(55,65,81,0.6)] gap-1 my-2 md:my-4">
+            </div>
+            {/* Tampilan Pelanggaran */}
+            {maxFoul > 0 && (
+                    <div className="flex flex-col border rounded-md px-2 py-1 bg-[rgba(55,65,81,0.6)] gap-1 my-4">
                         {Array.from({ length: Math.ceil(maxFoul / 7) }).map(
                             (_, rowIndex) => {
                                 const start = rowIndex * 7;
                                 const end = start + 7;
                                 return (
-                                    <div key={rowIndex} className="flex gap-1 justify-center">
+                                    <div key={rowIndex} className="flex gap-1 justify-center w-full">
                                         {[...Array(maxFoul).slice(start, end)].map((_, idx) => {
                                             const globalIdx = start + idx;
                                             return (
                                                 <div
                                                     key={globalIdx}
-                                                    className={`w-5 h-3 sm:w-6 sm:h-3.5 md:w-7 md:h-4 rounded-full border ${
+                                                    className={`w-20 h-4 rounded-full border ${
                                                         globalIdx < fouls
-                                                            ? "bg-red-500 border-red-500"
+                                                            ? "bg-yellow-400 border-yellow-600"
                                                             : "border-gray-400"
                                                     }`}
                                                 ></div>
@@ -77,9 +89,8 @@ export default function PlayerCard({
                         )}
                     </div>
                 )}
-            </div>
 
-            {/* --- Collapsible Control Panel --- */}
+            {/* --- Panel Kontrol yang Dapat Dilipat --- */}
             <button
                 onClick={() => setShowControls(!showControls)}
                 className="mt-2 text-gray-400 hover:text-white transition text-sm flex items-center gap-1"
@@ -110,21 +121,21 @@ export default function PlayerCard({
                 {showControls && (
                     <div className="flex flex-col items-center bg-gray-800 rounded-lg p-3 shadow-lg">
                         <div className="flex gap-2 mb-2 justify-around w-full">
-                            {/* --- USE addScore FOR INCREMENTS --- */}
+                            {/* --- Gunakan addScore untuk Penambahan --- */}
                             {[1, 2, 3].map((val) => (
                                 <button
                                     key={val}
-                                    onClick={() => addScore(val)} // Use addScore here
+                                    onClick={() => addScore(val)}
                                     className="bg-gray-700 text-white px-3 py-1 rounded text-sm md:text-lg hover:bg-gray-600 transition disabled:opacity-50 w-full"
                                     disabled={disabled}
                                 >
                                     +{val}
                                 </button>
                             ))}
-                            {/* --- USE addFoul FOR FOUL INCREMENT --- */}
+                            {/* --- Gunakan addFoul untuk Penambahan Pelanggaran --- */}
                             {maxFoul > 0 && (
                                 <button
-                                    onClick={() => addFoul(1)} // Use addFoul here (passing 1 as the change)
+                                    onClick={() => addFoul(1)}
                                     className="text-lg px-3 bg-red-600 text-white hover:bg-red-700 border border-red-800 rounded transition disabled:opacity-50 w-full"
                                     disabled={disabled || fouls >= maxFoul}
                                 >
@@ -133,7 +144,7 @@ export default function PlayerCard({
                             )}
                         </div>
                         <div className="flex flex-col items-center gap-2 w-full">
-                            {/* --- Keep setScore for decrement --- */}
+                            {/* --- Tetap gunakan setScore untuk pengurangan --- */}
                             <button
                                 onClick={() => setScore(Math.max(0, score - 1))}
                                 className="text-xs md:text-sm px-3 py-1 bg-gray-700 text-white hover:bg-gray-600 border border-gray-900 rounded transition disabled:opacity-50 w-full"
@@ -142,7 +153,7 @@ export default function PlayerCard({
                                 Kurangi Skor (-1)
                             </button>
 
-                            {/* --- Keep setFouls for decrement --- */}
+                            {/* --- Tetap gunakan setFouls untuk pengurangan --- */}
                             {maxFoul > 0 && (
                                 <button
                                     onClick={() => setFouls(Math.max(0, fouls - 1))}
@@ -156,7 +167,7 @@ export default function PlayerCard({
                     </div>
                 )}
             </div>
-            {/* --- End Collapsible Control Panel --- */}
+            {/* --- Akhir Panel Kontrol yang Dapat Dilipat --- */}
         </div>
     );
 }
