@@ -56,10 +56,9 @@ export default function App() {
   const [showSetup, setShowSetup] = useState(true);
   const [showEndConfirmation, setShowEndConfirmation] = useState(false);
 
-   // --- NEW: State for Player Controls Visibility (Lifted Up) ---
+  // --- NEW: State for Player Controls Visibility (Lifted Up) ---
   const [showControls1, setShowControls1] = useState(true);
   const [showControls2, setShowControls2] = useState(true);
-  
 
   // --- useEffect untuk Mengelola Splash Screen ---
   useEffect(() => {
@@ -74,9 +73,9 @@ export default function App() {
   }, []);
 
   const toggleBothControls = useCallback(() => {
-    setShowControls1(prev => !prev);
-    setShowControls2(prev => !prev);
-  }, []); 
+    setShowControls1((prev) => !prev);
+    setShowControls2((prev) => !prev);
+  }, []);
   // --- Fungsi Logika Game ---
   const endGame = useCallback(
     (winnerName: string | null, reason: string) => {
@@ -276,41 +275,41 @@ export default function App() {
         case "0":
           updateScore(2, 3);
           break;
-          case "a":
-            updateScore(1, -1);
-            break;
-          case "s":
-            updateFouls(1, -1);
-            break;
-          case "k":
-            updateScore(2, -1);
-            break;
-          case "l":
-            updateFouls(2, -1);
-            break;
-          case "x":
-            updateFouls(1, 1);
-            break;
-          case "m":
-            updateFouls(2, 1);
-            break;
-          case " ":
-            // Toggle Timer Logic (existing)
-            if (timerEverStarted) {
-                setIsRunning(prev => !prev);
-            } else {
-                setIsRunning(true);
-                handleTimerFirstStart(); // Make sure this function is defined or imported if needed elsewhere
-            }
-            event.preventDefault(); // Prevent default space bar action
-            break;
-          case "Shift":
-            // Toggle Controls Logic (NEW)
-            toggleBothControls();
+        case "a":
+          updateScore(1, -1);
+          break;
+        case "s":
+          updateFouls(1, -1);
+          break;
+        case "k":
+          updateScore(2, -1);
+          break;
+        case "l":
+          updateFouls(2, -1);
+          break;
+        case "x":
+          updateFouls(1, 1);
+          break;
+        case "m":
+          updateFouls(2, 1);
+          break;
+        case " ":
+          // Toggle Timer Logic (existing)
+          if (timerEverStarted) {
+            setIsRunning((prev) => !prev);
+          } else {
+            setIsRunning(true);
+            handleTimerFirstStart(); // Make sure this function is defined or imported if needed elsewhere
+          }
+          event.preventDefault(); // Prevent default space bar action
+          break;
+        case "Shift":
+          // Toggle Controls Logic (NEW)
+          toggleBothControls();
 
-            event.preventDefault(); // Prevent default space bar action
-            break;
-          default:
+          event.preventDefault(); // Prevent default space bar action
+          break;
+        default:
       }
     };
     document.addEventListener("keydown", handleKeyDown);
@@ -365,14 +364,7 @@ export default function App() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [
-    isRunning,
-    gameEnded,
-    initialDuration,
-    timeLeft,
-    endGame,
-    firstScorer,
-  ]);
+  }, [isRunning, gameEnded, initialDuration, timeLeft, endGame, firstScorer]);
 
   useEffect(() => {
     setTimeLeft(initialDuration);
@@ -401,20 +393,20 @@ export default function App() {
   const canModifyScore = timerEverStarted && !gameEnded;
 
   return (
-    <div className=" mt-10 min-h-screen bg-black flex items-start py-3 text-white overflow-hidden overflow-y-hidden scroll-m-0">
+    <div className=" mt-10 max-h-screen bg-black flex items-start py-3 text-white overflow-hidden overflow-y-hidden scroll-m-0">
       {/* Winner Modal */}
       {gameEnded && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex z-50 p-4 sm:p-6 md:p-8 items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex z-50 p-16 items-center justify-center">
           <div className="bg-gray-900 w-full h-full max-w-none max-h-none p-6 rounded-xl border border-gray-700 flex flex-col shadow-2xl overflow-y-none">
-            {" "}
-            <div className="flex-grow">
+            {/* This div will grow and provide space */}
+            <div className="flex-grow flex flex-col">
               {" "}
-              {/* BARU: flex-grow agar konten mengisi ruang */}
+              {/* ADDED: flex flex-col here */}
               <div className="bg-gray-800 border border-gray-700 text-center px-4 py-5 rounded-lg mb-5 text-white flex flex-col gap-y-2">
                 {winner ? (
                   <>
                     <p className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-1">
-                      {winner} WIN
+                      {winner.toUpperCase()} WIN
                     </p>
                     <p className="text-md sm:text-lg md:text-xl lg:text-2xl text-gray-300">
                       {endReason}
@@ -434,83 +426,98 @@ export default function App() {
                   Durasi Permainan: {formatTime(elapsedTime)}
                 </p>
               </div>
-              {/* Skor Akhir */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center mt-6 mb-6">
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start mt-6 mb-6 flex-grow">
                 <div
                   className={`bg-gray-700 p-4 rounded-lg border ${
                     winner === player1
-                      ? "border-yellow-400 shadow-lg shadow-yellow-500/30"
+                      ? "border-green-400 shadow-lg shadow-green-500/30"
                       : "border-gray-600"
-                  } relative flex flex-col justify-center items-center h-full`}
+                  } relative flex flex-col justify-between items-start py-7 px-10 md:h-auto`}
                 >
-                  {" "}
-                  {/* BARU: min-h untuk menjaga tinggi */}
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-red-100 truncate w-full px-2"
-                    title={player1}
-                  >
-                    {player1}
-                  </h3>
+                  <header>
+                    <h3
+                      className="text-[50px] font-semibold w-full text-start mb-2"
+                      title={player1}
+                    >
+                      {player1.toUpperCase()}
+                    </h3>
+                    <h4
+                      className="text-[40px] font-semibold w-full text-start mb-2"
+                      title={playerFrom1.toUpperCase()}
+                    >
+                      {playerFrom1.toUpperCase()}
+                    </h4>
+                  </header>
+
                   {firstScorer === 1 && (
-                    <span className="text-xs absolute top-2 right-2 bg-yellow-500 text-black px-1.5 py-0.5 rounded font-semibold">
+                    <span className="text-xs absolute top-2 right-2 bg-green-500 text-white px-1.5 py-0.5 rounded font-semibold">
                       SKOR DULUAN
                     </span>
                   )}
-                  <p className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-bold text-white my-2">
-                    {score1}
-                  </p>
+                  <section className="flex flex-col gap-3 w-full text-5xl">
+                    <div className="flex w-full justify-between items-center">
+                    <p className="text-white">SKOR :</p>
+                    <p className="font-bold">{score1}</p>
+                  </div>
                   {maxFoul > 0 && (
-                    <p className="text-md sm:text-lg md:text-xl lg:text-2xl text-yellow-200">
-                      Pelanggaran: {foul1}
-                    </p>
+                    <div className="flex w-full justify-between items-center">
+                      <p className="text-white">FOUL :</p>
+                      <p className="font-bold text-yellow-300">{foul1}</p>
+                    </div>
                   )}
+                  </section>
                 </div>
+
                 <div
                   className={`bg-gray-700 p-4 rounded-lg border ${
                     winner === player2
-                      ? "border-yellow-400 shadow-lg shadow-yellow-500/30"
+                      ? "border-green-400 shadow-lg shadow-green-500/30"
                       : "border-gray-600"
-                  } relative flex flex-col justify-center items-center min-h-[250px] sm:min-h-[300px]`}
+                  } relative flex flex-col justify-between items-start py-7 px-10 md:h-auto`}
                 >
-                  {" "}
-                  {/* BARU: min-h */}
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-blue-100 truncate w-full px-2"
-                    title={player2}
-                  >
-                    {player2}
-                  </h3>
+                  <header>
+                    <h3
+                      className="text-[50px] font-semibold w-full text-start mb-2"
+                      title={player2}
+                    >
+                      {player2.toUpperCase()}
+                    </h3>
+                    <h4
+                      className="text-[40px] font-semibold w-full text-start mb-2"
+                      title={playerFrom2.toUpperCase()}
+                    >
+                      {playerFrom2.toUpperCase()}
+                    </h4>
+                  </header>
+
                   {firstScorer === 2 && (
                     <span className="text-xs absolute top-2 right-2 bg-yellow-500 text-black px-1.5 py-0.5 rounded font-semibold">
                       SKOR DULUAN
                     </span>
                   )}
-                  <p className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-bold text-white my-2">
-                    {score2}
-                  </p>
+                  <section className="flex flex-col gap-3 w-full text-5xl">
+                    <div className="flex w-full justify-between items-center">
+                    <p className="text-white">SKOR :</p>
+                    <p className="font-bold">{score2}</p>
+                  </div>
                   {maxFoul > 0 && (
-                    <p className="text-md sm:text-lg md:text-xl lg:text-2xl text-yellow-200">
-                      Pelanggaran: {foul2}
-                    </p>
+                    <div className="flex w-full justify-between items-center">
+                      <p className="text-white">FOUL :</p>
+                      <p className="font-bold text-yellow-300">{foul2}</p>
+                    </div>
                   )}
+                  </section>
                 </div>
-              </div>
+              </section>
             </div>
+
             {/* Bagian Bawah: Tombol Aksi */}
             <div className="pt-4 border-t border-gray-700 flex flex-col sm:flex-row justify-center gap-3">
-              {" "}
-              {/* `mt-auto` akan mendorong ini ke bawah */}
               <button
                 onClick={() => setShowSetup(true)}
                 className="px-4 py-2 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition w-full sm:w-auto text-lg"
               >
                 Main Lagi
-              </button>
-              <button
-                onClick={() => setGameEnded(false)}
-                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-900 hover:text-white transition w-full sm:w-auto text-lg"
-              >
-                Tutup (Lihat Skor Akhir)
               </button>
             </div>
           </div>
@@ -549,8 +556,8 @@ export default function App() {
 
       {/* Area Player Cards */}
       <div className="flex flex-col md:flex-row justify-around items-start w-full h-full gap-6 md:gap-10">
-         {!gameEnded && <FloatingButton />}
-         {!gameEnded && <FullscreenToggleButton />}
+        {!gameEnded && <FloatingButton />}
+        {!gameEnded && <FullscreenToggleButton />}
         <PlayerCard
           name={player1}
           from={playerFrom1}
@@ -591,23 +598,23 @@ export default function App() {
         />
 
         <div className="mt-64 flex flex-col items-center justify-center">
-        <Timer
-          timeLeft={timeLeft}
-          isRunning={isRunning}
-          initialDuration={initialDuration}
-          setTimeLeft={setTimeLeft}
-          setIsRunning={setIsRunning}
-          disabled={gameEnded}
-          onNewGame={handleNewGameFromTimer}
-          onTimerFirstStart={handleTimerFirstStart}
-        />
-        <button
-          onClick={() => setShowEndConfirmation(true)}
-          className="mb-4 px-4 py-2 rounded-lg border border-red-600 text-red-300 hover:bg-red-900 hover:text-white transition text-lg"
-          disabled={gameEnded || !timerEverStarted}
-        >
-          Selesaikan Game
-        </button>
+          <Timer
+            timeLeft={timeLeft}
+            isRunning={isRunning}
+            initialDuration={initialDuration}
+            setTimeLeft={setTimeLeft}
+            setIsRunning={setIsRunning}
+            disabled={gameEnded}
+            onNewGame={handleNewGameFromTimer}
+            onTimerFirstStart={handleTimerFirstStart}
+          />
+          <button
+            onClick={() => setShowEndConfirmation(true)}
+            className="mb-4 px-4 py-2 rounded-lg border border-red-600 text-red-300 hover:bg-red-900 hover:text-white transition text-lg"
+            disabled={gameEnded || !timerEverStarted}
+          >
+            Selesaikan Game
+          </button>
         </div>
 
         <PlayerCard
