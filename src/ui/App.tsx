@@ -4,6 +4,8 @@ import PlayerCard from "./components/PlayerCard"; // Pastikan komponen PlayerCar
 import Timer from "./components/Timer"; // Pastikan komponen Timer ada
 import SetupModal from "./components/SetupModal"; // Pastikan komponen SetupModal ada
 import SplashScreen from "./components/SplashScreen"; // Pastikan komponen SplashScreen ada
+import FloatingButton from "./components/FloatingButton"; // Pastikan komponen FloatingButton ada
+import FullscreenToggleButton from "./components/FullScreenToggleButton";
 
 // Fungsi bantuan untuk format waktu
 const formatTime = (seconds: number): string => {
@@ -516,6 +518,8 @@ export default function App() {
 
       {/* Area Player Cards */}
       <div className="flex flex-col md:flex-row justify-around items-start mt-5 w-full h-full gap-6 md:gap-10">
+         {!gameEnded && <FloatingButton />}
+         {!gameEnded && <FullscreenToggleButton />}
         <PlayerCard
           name={player1}
           from={playerFrom1}
