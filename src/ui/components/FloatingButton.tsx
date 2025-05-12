@@ -1,5 +1,5 @@
 // FloatingButton.tsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
 const FloatingButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,12 +8,15 @@ const FloatingButton: React.FC = () => {
   // Close popup when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -28,16 +31,49 @@ const FloatingButton: React.FC = () => {
       {isOpen && (
         <div
           ref={popupRef}
-          className="absolute top-0 right-full ml-3 mt-1 bg-white shadow-lg rounded-lg p-4 w-48"
+          className="absolute top-0 right-full ml-3 mt-1 bg-black border border-gray-700 shadow-lg rounded-xl p-5 w-72 text-white"
         >
-          <h1 className="text-lg font-bold text-gray-800">Keyboard Shortcuts</h1>
-          <ul className="mt-2 text-gray-700">
-            <li className="mb-1">Ctrl + N: New Game</li>
-            <li className="mb-1">Ctrl + S: Save Game</li>
-            <li className="mb-1">Ctrl + L: Load Game</li>
-            <li className="mb-1">Ctrl + P: Pause Game</li>
-            <li>Ctrl + R: Resume Game</li>
-          </ul>
+          <h1 className="text-xl font-semibold mb-3">🎮 Keyboard Shortcuts</h1>
+
+          <div className="mb-4">
+            <h2 className="text-sm font-medium text-gray-400 mb-1">
+              ➕ Tambah Skor
+            </h2>
+            <ul className="text-sm space-y-1 pl-4 list-disc">
+              <li>1 / 2 / 3: Tim 1</li>
+              <li>8 / 9 / 0: Tim 2</li>
+            </ul>
+          </div>
+
+          <div className="mb-4">
+            <h2 className="text-sm font-medium text-gray-400 mb-1">
+              ➖ Kurangi Skor
+            </h2>
+            <ul className="text-sm space-y-1 pl-4 list-disc">
+              <li>A: Tim 1</li>
+              <li>K: Tim 2</li>
+            </ul>
+          </div>
+
+          <div className="mb-4">
+            <h2 className="text-sm font-medium text-gray-400 mb-1">💢 Foul</h2>
+            <ul className="text-sm space-y-1 pl-4 list-disc">
+              <li>S: Kurangi Tim 1</li>
+              <li>L: Kurangi Tim 2</li>
+              <li>X: Tambah Tim 1</li>
+              <li>M: Tambah Tim 2</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-medium text-gray-400 mb-1">
+              ⏱ Kontrol Tambahan
+            </h2>
+            <ul className="text-sm space-y-1 pl-4 list-disc">
+              <li>Spasi: Mulai/Jeda Timer</li>
+              <li>Shift: Ganti Mode Kontrol</li>
+            </ul>
+          </div>
         </div>
       )}
     </div>

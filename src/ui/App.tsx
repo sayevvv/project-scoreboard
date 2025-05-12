@@ -56,6 +56,11 @@ export default function App() {
   const [showSetup, setShowSetup] = useState(true);
   const [showEndConfirmation, setShowEndConfirmation] = useState(false);
 
+   // --- NEW: State for Player Controls Visibility (Lifted Up) ---
+  const [showControls1, setShowControls1] = useState(true);
+  const [showControls2, setShowControls2] = useState(true);
+  
+
   // --- useEffect untuk Mengelola Splash Screen ---
   useEffect(() => {
     const fadeTimer = setTimeout(() => {
@@ -68,6 +73,10 @@ export default function App() {
     return () => clearTimeout(fadeTimer);
   }, []);
 
+  const toggleBothControls = useCallback(() => {
+    setShowControls1(prev => !prev);
+    setShowControls2(prev => !prev);
+  }, []); 
   // --- Fungsi Logika Game ---
   const endGame = useCallback(
     (winnerName: string | null, reason: string) => {
@@ -279,6 +288,28 @@ export default function App() {
           case "l":
             updateFouls(2, -1);
             break;
+          case "x":
+            updateFouls(1, 1);
+            break;
+          case "m":
+            updateFouls(2, 1);
+            break;
+          case " ":
+            // Toggle Timer Logic (existing)
+            if (timerEverStarted) {
+                setIsRunning(prev => !prev);
+            } else {
+                setIsRunning(true);
+                handleTimerFirstStart(); // Make sure this function is defined or imported if needed elsewhere
+            }
+            event.preventDefault(); // Prevent default space bar action
+            break;
+          case "Shift":
+            // Toggle Controls Logic (NEW)
+            toggleBothControls();
+
+            event.preventDefault(); // Prevent default space bar action
+            break;
           default:
       }
     };
@@ -370,7 +401,7 @@ export default function App() {
   const canModifyScore = timerEverStarted && !gameEnded;
 
   return (
-    <div className="min-h-screen bg-black flex items-center py-3 text-white overflow-hidden overflow-y-hidden scroll-m-0">
+    <div className=" mt-10 min-h-screen bg-black flex items-start py-3 text-white overflow-hidden overflow-y-hidden scroll-m-0">
       {/* Winner Modal */}
       {gameEnded && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex z-50 p-4 sm:p-6 md:p-8 items-center justify-center">
@@ -517,7 +548,7 @@ export default function App() {
       {/* Komponen Timer */}
 
       {/* Area Player Cards */}
-      <div className="flex flex-col md:flex-row justify-around items-start mt-5 w-full h-full gap-6 md:gap-10">
+      <div className="flex flex-col md:flex-row justify-around items-start w-full h-full gap-6 md:gap-10">
          {!gameEnded && <FloatingButton />}
          {!gameEnded && <FullscreenToggleButton />}
         <PlayerCard
@@ -555,9 +586,11 @@ export default function App() {
           gradient="from-black via-red-600 to-black"
           gradient2="from-red-600 to-black"
           isFirstScorer={firstScorer === 1} // BARU: Mengirim status pencetak pertama
+          showControls={showControls1}
+          setShowControls={setShowControls1}
         />
 
-        <div className="mt-52 flex flex-col items-center justify-center">
+        <div className="mt-64 flex flex-col items-center justify-center">
         <Timer
           timeLeft={timeLeft}
           isRunning={isRunning}
@@ -610,6 +643,8 @@ export default function App() {
           gradient="from-black via-blue-600 to-black"
           gradient2="from-blue-600 to-black"
           isFirstScorer={firstScorer === 2} // BARU: Mengirim status pencetak pertama
+          showControls={showControls2}
+          setShowControls={setShowControls2}
         />
       </div>
 
