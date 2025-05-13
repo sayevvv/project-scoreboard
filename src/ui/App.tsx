@@ -396,13 +396,13 @@ export default function App() {
     <div className=" mt-10 max-h-screen bg-black flex items-start py-3 text-white overflow-hidden overflow-y-hidden scroll-m-0">
       {/* Winner Modal */}
       {gameEnded && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex z-50 p-16 items-center justify-center">
+        <div className="montserrat fixed inset-0 bg-black bg-opacity-90 flex z-50 p-10 items-center justify-center">
           <div className="bg-gray-900 w-full h-full max-w-none max-h-none p-6 rounded-xl border border-gray-700 flex flex-col shadow-2xl overflow-y-none">
             {/* This div will grow and provide space */}
             <div className="flex-grow flex flex-col">
               {" "}
               {/* ADDED: flex flex-col here */}
-              <div className="bg-gray-800 border border-gray-700 text-center px-4 py-5 rounded-lg mb-5 text-white flex flex-col gap-y-2">
+              <div className="bg-gray-800 border border-gray-700 text-center px-4 py-5 rounded-lg text-white flex flex-col gap-y-2">
                 {winner ? (
                   <>
                     <p className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold mb-1">
@@ -428,9 +428,9 @@ export default function App() {
               </div>
               <section className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start mt-6 mb-6 flex-grow">
                 <div
-                  className={`bg-gray-700 p-4 rounded-lg border ${
+                  className={`bg-gradient-to-br from-red-600 to-black p-4 rounded-lg border ${
                     winner === player1
-                      ? "border-green-400 shadow-lg shadow-green-500/30"
+                      ? "border-green-400 shadow-[0_0_60px_#22c55e]"
                       : "border-gray-600"
                   } relative flex flex-col justify-between items-start py-7 px-10 md:h-auto`}
                 >
@@ -451,27 +451,27 @@ export default function App() {
 
                   {firstScorer === 1 && (
                     <span className="text-xs absolute top-2 right-2 bg-green-500 text-white px-1.5 py-0.5 rounded font-semibold">
-                      SKOR DULUAN
+                      SKOR AWAL
                     </span>
                   )}
                   <section className="flex flex-col gap-3 w-full text-5xl">
                     <div className="flex w-full justify-between items-center">
                     <p className="text-white">SKOR :</p>
-                    <p className="font-bold">{score1}</p>
+                    <p className="font-bold karantina-regular text-8xl">{score1}</p>
                   </div>
                   {maxFoul > 0 && (
                     <div className="flex w-full justify-between items-center">
                       <p className="text-white">FOUL :</p>
-                      <p className="font-bold text-yellow-300">{foul1}</p>
+                      <p className="font-bold text-yellow-300 karantina-regular text-8xl">{foul1}</p>
                     </div>
                   )}
                   </section>
                 </div>
 
                 <div
-                  className={`bg-gray-700 p-4 rounded-lg border ${
+                  className={`bg-gradient-to-bl from-blue-600 to-black p-4 rounded-lg border ${
                     winner === player2
-                      ? "border-green-400 shadow-lg shadow-green-500/30"
+                      ? "border-green-400 shadow-[0_0_60px_#22c55e]"
                       : "border-gray-600"
                   } relative flex flex-col justify-between items-start py-7 px-10 md:h-auto`}
                 >
@@ -492,18 +492,18 @@ export default function App() {
 
                   {firstScorer === 2 && (
                     <span className="text-xs absolute top-2 right-2 bg-yellow-500 text-black px-1.5 py-0.5 rounded font-semibold">
-                      SKOR DULUAN
+                      SKOR AWAL
                     </span>
                   )}
                   <section className="flex flex-col gap-3 w-full text-5xl">
                     <div className="flex w-full justify-between items-center">
                     <p className="text-white">SKOR :</p>
-                    <p className="font-bold">{score2}</p>
+                    <p className="font-bold karantina-regular text-8xl">{score2}</p>
                   </div>
                   {maxFoul > 0 && (
                     <div className="flex w-full justify-between items-center">
                       <p className="text-white">FOUL :</p>
-                      <p className="font-bold text-yellow-300">{foul2}</p>
+                      <p className="font-bold text-yellow-300 karantina-regular text-8xl">{foul2}</p>
                     </div>
                   )}
                   </section>
@@ -555,7 +555,7 @@ export default function App() {
       {/* Komponen Timer */}
 
       {/* Area Player Cards */}
-      <div className="flex flex-col md:flex-row justify-around items-start w-full h-full gap-6 md:gap-10">
+      <div className="fixed flex flex-col md:flex-row justify-around items-start w-full h-full max-h-screen gap-6 md:gap-10">
         {!gameEnded && <FloatingButton />}
         {!gameEnded && <FullscreenToggleButton />}
         <PlayerCard

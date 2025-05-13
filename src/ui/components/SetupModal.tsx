@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FullscreenToggleButton from "./FullScreenToggleButton";
 
 type Props = {
   onSubmit: (values: {
@@ -17,13 +18,14 @@ export default function SetupModal({ onSubmit }: Props) {
   const [name2, setName2] = useState("");
   const [from1, setFrom1] = useState("");
   const [from2, setFrom2] = useState("");
-  const [fouls, setFouls] = useState(5);
-  const [score, setScore] = useState(100);
+  const [fouls, setFouls] = useState(4);
+  const [score, setScore] = useState(30);
   const [time, setTime] = useState(5);
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black bg-opacity-60 fixed inset-0 z-50 gap-5">
+      <div className="montserrat min-h-screen flex flex-col items-center justify-center bg-black bg-opacity-60 fixed inset-0 z-50 gap-5">
+        <FullscreenToggleButton />
         <header>
           <h2 className="karantina-bold text-6xl font-bold mb-3 text-center text-white">
             Setup Pertandingan

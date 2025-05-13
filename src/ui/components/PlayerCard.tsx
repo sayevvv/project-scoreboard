@@ -34,11 +34,10 @@ export default function PlayerCard({
   showControls,
   setShowControls,
 }: Props) {
-  const scoreAreaPadding = showControls ? 'py-10' : 'py-20';
+  const scoreAreaPadding = showControls ? 'py-10' : 'py-30';
 
   return (
-    // MODIFIED: Kept max-h-screen. This is the outermost constraint for the card.
-    <div className="flex flex-col items-center w-full max-h-screen"> {/* Ensure card takes full allocated height but not more than screen */}
+    <div className="flex flex-col items-center w-full max-h-[90vh]"> {/* Ensure card takes full allocated height but not more than screen */}
       {/* Nama Pemain dan Asal */}
       <div className={`flex flex-row items-center justify-between w-full px-4 bg-gradient-to-r ${gradient2} mb-2.5 flex-shrink-0`}>
         <h2 className="text-[40px] montserrat text-start mr-2 truncate" title={name}>
@@ -48,7 +47,6 @@ export default function PlayerCard({
       </div>
 
       {/* Kartu Tampilan Skor dan Pelanggaran */}
-      {/* MODIFIED: Added min-h-0 to allow this flex-grow container to shrink below its content's intrinsic height if necessary */}
       <div
         className={`relative flex flex-col items-center justify-center border-2 px-6 sm:px-12 ${scoreAreaPadding} rounded-lg shadow-lg bg-gradient-to-br ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full flex-grow min-h-0`}
       >
@@ -60,8 +58,6 @@ export default function PlayerCard({
         )}
 
         {/* Skor */}
-        {/* The 2xl:text-[500px] is maintained as requested. my-auto will center it.
-            If the parent (flex-grow min-h-0 div) is shorter than 500px, the text will be clipped. */}
         <div className="karantina-regular text-[80px] xs:text-[100px] sm:text-[140px] md:text-[180px] lg:text-[220px] xl:text-[280px] 2xl:text-[500px] font-bold bg-white bg-clip-text text-transparent leading-none my-auto">
           {score}
         </div>
