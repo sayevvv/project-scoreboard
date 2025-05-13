@@ -19,7 +19,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ isFading }) => {
           <p 
             className="mx-auto text-8xl karantina-bold text-white"
           >
-            AKIRA DOJO
+            AKAI DOJO SCOREBOARD
           </p>
         </div>
         
