@@ -19,8 +19,8 @@ export default function SetupModal({ onSubmit }: Props) {
   const [from1, setFrom1] = useState("");
   const [from2, setFrom2] = useState("");
   const [fouls, setFouls] = useState(4);
-  const [score, setScore] = useState(30);
-  const [time, setTime] = useState(5);
+  const [score, setScore] = useState(20);
+  const [time, setTime] = useState(7);
 
   return (
     <>

@@ -456,15 +456,19 @@ export default function App() {
                   )}
                   <section className="flex flex-col gap-3 w-full text-5xl">
                     <div className="flex w-full justify-between items-center">
-                    <p className="text-white">SKOR :</p>
-                    <p className="font-bold karantina-regular text-8xl">{score1}</p>
-                  </div>
-                  {maxFoul > 0 && (
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-white">FOUL :</p>
-                      <p className="font-bold text-yellow-300 karantina-regular text-8xl">{foul1}</p>
+                      <p className="text-white">SKOR :</p>
+                      <p className="font-bold karantina-regular text-8xl">
+                        {score1}
+                      </p>
                     </div>
-                  )}
+                    {maxFoul > 0 && (
+                      <div className="flex w-full justify-between items-center">
+                        <p className="text-white">FOUL :</p>
+                        <p className="font-bold text-yellow-300 karantina-regular text-8xl">
+                          {foul1}
+                        </p>
+                      </div>
+                    )}
                   </section>
                 </div>
 
@@ -497,15 +501,19 @@ export default function App() {
                   )}
                   <section className="flex flex-col gap-3 w-full text-5xl">
                     <div className="flex w-full justify-between items-center">
-                    <p className="text-white">SKOR :</p>
-                    <p className="font-bold karantina-regular text-8xl">{score2}</p>
-                  </div>
-                  {maxFoul > 0 && (
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-white">FOUL :</p>
-                      <p className="font-bold text-yellow-300 karantina-regular text-8xl">{foul2}</p>
+                      <p className="text-white">SKOR :</p>
+                      <p className="font-bold karantina-regular text-8xl">
+                        {score2}
+                      </p>
                     </div>
-                  )}
+                    {maxFoul > 0 && (
+                      <div className="flex w-full justify-between items-center">
+                        <p className="text-white">FOUL :</p>
+                        <p className="font-bold text-yellow-300 karantina-regular text-8xl">
+                          {foul2}
+                        </p>
+                      </div>
+                    )}
                   </section>
                 </div>
               </section>
@@ -519,6 +527,12 @@ export default function App() {
               >
                 Main Lagi
               </button>
+              {/* <button
+                onClick={() => setGameEnded(false)} // Just close modal, keep state
+                className="px-4 py-2 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition w-full sm:w-auto text-lg"
+              >
+                Tutup (Lihat Skor Akhir)
+              </button> */}
             </div>
           </div>
         </div>
