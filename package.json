@@ -1,7 +1,7 @@
 {
   "name": "project-scoreboard",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A scoreboard application mianly for combat sports.",
   "author": "Abdullah Shamil Basayev",
   "type": "module",
