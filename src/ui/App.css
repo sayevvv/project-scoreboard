@@ -25,6 +25,17 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Timer';
+  src: url('../public/fonts/timerfont.ttf') format('truetype');
+  font-style: normal;
+}
+
+.timer {
+  font-family: 'Timer', sans-serif;
+  font-weight: normal;
+}
+
 .montserrat {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
