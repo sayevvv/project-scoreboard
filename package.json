@@ -2,8 +2,8 @@
   "name": "project-scoreboard",
   "private": true,
   "version": "0.0.10",
-  "description": "A scoreboard application mianly for combat sports.",
-  "author": "Abdullah Shamil Basayev",
+  "description": "Karate Scoreboard App",
+  "author": "akaidojo@2025",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
