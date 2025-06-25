@@ -299,7 +299,8 @@ export default function DisplayPage() {
                 {data.player1Name.toUpperCase()}
               </h2>
               {data.player1From && (
-                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 w-full truncate text-center mt-1">
+                // --- PERUBAHAN 1: Ukuran font "From" diperbesar ---
+                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-3xl lg:text-4xl text-gray-200 w-full truncate text-center mt-1">
                   {data.player1From.toUpperCase()}
                 </p>
               )}
@@ -321,7 +322,7 @@ export default function DisplayPage() {
               <div
                 className="karantina-regular text-white leading-none my-auto select-none"
                 style={{
-                  fontSize: "clamp(5rem, 22vw, 28rem)",
+                  fontSize: "clamp(6rem, 25vw, 32rem)",
                   textShadow:
                     "0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(255,80,80,0.5)",
                 }}
@@ -336,13 +337,12 @@ export default function DisplayPage() {
         </div>
 
         {/* Kolom Tengah: Timer & Tatami */}
-        {/* --- PERUBAHAN 1: Container diubah menjadi grid dengan 3 baris sama tinggi --- */}
+        {/* --- PERUBAHAN 2: Padding horizontal (px) dikecilkan agar kolom lebih ramping --- */}
         <div
-          className={`grid grid-rows-3 h-full p-4 px-10 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
+          className={`grid grid-rows-3 h-full p-4 px-4 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
             data.gameEnded ? "opacity-0" : "opacity-100"
           }`}
         >
-          {/* --- PERUBAHAN 2: Info Tatami ditempatkan di baris 1, rata atas-tengah --- */}
           <div className="text-center self-start justify-self-center">
             <div className="text-4xl lg:text-6xl font-bold text-gray-300 tracking-widest montserrat-bold">
               {data.tatamiLabel || "TATAMI"}
@@ -352,7 +352,6 @@ export default function DisplayPage() {
             </div>
           </div>
 
-          {/* --- PERUBAHAN 3: Timer ditempatkan di baris 2, pas di tengah selnya --- */}
           <div className="flex flex-col items-center place-self-center">
             <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-5 py-3 md:px-8 md:py-5">
               <h2 className="font-mono font-bold tabular-nums leading-none text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] flex items-baseline justify-center">
@@ -366,7 +365,8 @@ export default function DisplayPage() {
               </h2>
             </div>
             {data.matchLabel && (
-              <p className="montserrat font-bold text-xl md:text-2xl lg:text-3xl text-yellow-400 tracking-widest mt-3 uppercase text-center">
+              // --- PERUBAHAN 3: Ukuran font Match Label diperbesar ---
+              <p className="montserrat font-bold text-xl md:text-3xl lg:text-5xl text-yellow-400 tracking-widest mt-3 uppercase text-center">
                 {data.matchLabel}
               </p>
             )}
@@ -388,16 +388,21 @@ export default function DisplayPage() {
           }`}
         >
           <div className="flex-grow flex flex-col min-h-0">
-            <div className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}>
-                            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate" title={data.player2Name}>
-                                {data.player2Name.toUpperCase()}
-                            </h2>
-                            {data.player2From && (
-                                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 w-full truncate text-center mt-1">
-                                    {data.player2From.toUpperCase()}
-                                </p>
-                            )}
-                        </div>
+            <div
+              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}
+            >
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
+                title={data.player2Name}
+              >
+                {data.player2Name.toUpperCase()}
+              </h2>
+              {data.player2From && (
+                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-3xl lg:text-4xl text-gray-200 w-full truncate text-center mt-1">
+                  {data.player2From.toUpperCase()}
+                </p>
+              )}
+            </div>
 
             <div
               className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-blue-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
@@ -415,7 +420,7 @@ export default function DisplayPage() {
               <div
                 className="karantina-regular text-white leading-none my-auto select-none"
                 style={{
-                  fontSize: "clamp(5rem, 22vw, 28rem)",
+                  fontSize: "clamp(6rem, 25vw, 32rem)",
                   textShadow:
                     "0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(80,80,255,0.5)",
                 }}
