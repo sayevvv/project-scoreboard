@@ -16,6 +16,11 @@ type Props = {
   }) => void;
 };
 
+const MAX_LENGTH_NAME = 15;
+const MAX_LENGTH_FROM = 15;
+const MAX_LENGTH_LABEL = 15;
+const MAX_LENGTH_NUMBER = 5;
+
 export default function SetupModal({ onSubmit }: Props) {
   const [name1, setName1] = useState("");
   const [name2, setName2] = useState("");
@@ -36,6 +41,21 @@ export default function SetupModal({ onSubmit }: Props) {
 
   const toggleAdvancedSettings = () => setIsAdvancedSettingsOpen(!isAdvancedSettingsOpen);
   const toggleDisplaySettings = () => setIsDisplaySettingsOpen(!isDisplaySettingsOpen);
+
+  const handleSubmit = () => {
+    onSubmit({
+      name1: name1.slice(0, MAX_LENGTH_NAME),
+      name2: name2.slice(0, MAX_LENGTH_NAME),
+      from1: from1.slice(0, MAX_LENGTH_FROM),
+      from2: from2.slice(0, MAX_LENGTH_FROM),
+      time,
+      fouls,
+      score,
+      tatamiLabel: tatamiLabel.slice(0, MAX_LENGTH_LABEL),
+      tatamiNumber: tatamiNumber.slice(0, MAX_LENGTH_NUMBER),
+      matchLabel: matchLabel.slice(0, MAX_LENGTH_LABEL),
+    });
+  };
 
   return (
     <>
@@ -111,6 +131,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     <input
                       type="text"
                       value={tatamiLabel}
+                      maxLength={MAX_LENGTH_LABEL}
                       onChange={(e) => setTatamiLabel(e.target.value)}
                       className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
@@ -120,6 +141,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     <input
                       type="text"
                       value={tatamiNumber}
+                      maxLength={MAX_LENGTH_NUMBER}
                       onChange={(e) => setTatamiNumber(e.target.value)}
                       className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
@@ -129,6 +151,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     <input
                       type="text"
                       value={matchLabel}
+                      maxLength={MAX_LENGTH_LABEL}
                       onChange={(e) => setMatchLabel(e.target.value)}
                       placeholder="Contoh: FINAL, PENYISIHAN, etc."
                       className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -243,6 +266,7 @@ export default function SetupModal({ onSubmit }: Props) {
                   <input
                     type="text"
                     value={name1}
+                    maxLength={MAX_LENGTH_NAME}
                     onChange={(e) => setName1(e.target.value)}
                     className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
                   />
@@ -253,6 +277,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     type="text"
                     placeholder="opsional"
                     value={from1}
+                    maxLength={MAX_LENGTH_FROM}
                     onChange={(e) => setFrom1(e.target.value)}
                     className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
                   />
@@ -264,6 +289,7 @@ export default function SetupModal({ onSubmit }: Props) {
                   <input
                     type="text"
                     value={name2}
+                    maxLength={MAX_LENGTH_NAME}
                     onChange={(e) => setName2(e.target.value)}
                     className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
                   />
@@ -274,6 +300,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     type="text"
                     placeholder="opsional"
                     value={from2}
+                    maxLength={MAX_LENGTH_FROM}
                     onChange={(e) => setFrom2(e.target.value)}
                     className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
                   />
@@ -283,9 +310,9 @@ export default function SetupModal({ onSubmit }: Props) {
           </div>
         </div>
         <button
-            // PERUBAHAN: Mengirim data baru ke App.tsx
-          onClick={() => onSubmit({ name1, name2, from1, from2, time, fouls, score, tatamiLabel, tatamiNumber, matchLabel })}
-          className="mb-4 px-6 py-3 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition text-lg font-semibold"
+          // --- PERUBAHAN 4: Panggil fungsi handleSubmit ---
+          onClick={handleSubmit}
+          className="px-6 py-3 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition text-lg font-semibold flex-shrink-0"
         >
           Mulai Permainan
         </button>

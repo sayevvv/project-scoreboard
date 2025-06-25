@@ -44,20 +44,23 @@ export default function PlayerCard({
   return (
     <div className="flex flex-col items-center w-full max-h-[90vh]">
       <div
-        className={`flex flex-row items-center justify-between w-full px-4 bg-gradient-to-r ${gradient2} mb-2.5 flex-shrink-0`}
-      >
-        <h2
-          className="text-[40px] montserrat text-start mr-2 truncate"
-          title={name}
-        >
-          {name.toUpperCase()}
-        </h2>
-        {from && (
-          <p className="text-[35px] text-white whitespace-nowrap flex-shrink-0">
-            {from.toUpperCase()}
-          </p>
-        )}
-      </div>
+                // 1. Diubah menjadi flex-col dan rata tengah
+                className={`flex flex-col items-center justify-center text-center w-full p-3 bg-gradient-to-r ${gradient2} mb-2.5 flex-shrink-0 rounded-t-lg`}
+            >
+                {/* 2. Ukuran font dikecilkan dan w-full ditambahkan */}
+                <h2
+                    className="text-2xl lg:text-3xl montserrat font-bold w-full truncate"
+                    title={name}
+                >
+                    {name.toUpperCase()}
+                </h2>
+                {from && (
+                    // 3. Ukuran font disesuaikan, truncate dan w-full ditambahkan
+                    <p className="text-lg lg:text-xl text-gray-200 w-full truncate mt-1">
+                        {from.toUpperCase()}
+                    </p>
+                )}
+            </div>
 
       <div
         className={`relative flex flex-col items-center justify-center border-2  px-6 sm:px-12 ${scoreAreaPadding} rounded-lg shadow-lg bg-gradient-to-br ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full flex-grow min-h-0`}

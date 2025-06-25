@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { type ScoreboardData, LOCAL_STORAGE_KEY } from "../types";
-import logo from "../../../desktopIcon.png";
 
 const formatDisplayTime = (seconds: number, centiseconds?: number): string => {
   if (isNaN(seconds) || seconds < 0) {
@@ -279,7 +278,7 @@ export default function DisplayPage() {
       <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-1 md:gap-2 flex-grow min-h-0">
         {/* Kolom Kiri: Pemain 1 */}
         <div
-          className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out ${
+          className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out min-w-0 ${
             data.gameEnded && data.winner && data.winner === data.player1Name
               ? "bg-green-700/20 rounded-lg"
               : ""
@@ -291,24 +290,23 @@ export default function DisplayPage() {
         >
           <div className="flex-grow flex flex-col min-h-0">
             <div
-              className={`montserrat flex flex-col items-center justify-center w-full px-3 py-2 bg-gray-900/70 backdrop-blur-sm border-t border-x border-gray-700 rounded-t-lg shadow-lg flex-shrink-0`}
+              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-r from-red-600 to-red-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-red-400`}
             >
               <h2
-                className="text-xl sm:text-2xl md:text-4xl lg:text-5xl montserrat-bold font-bold text-center w-full truncate"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
                 title={data.player1Name}
               >
                 {data.player1Name.toUpperCase()}
               </h2>
               {data.player1From && (
-                // PERUBAHAN: Menambahkan spasi (mt-1) antara nama dan lokasi
-                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-2xl lg:text-3xl text-gray-300 w-full truncate text-center mt-1">
+                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 w-full truncate text-center mt-1">
                   {data.player1From.toUpperCase()}
                 </p>
               )}
             </div>
 
             <div
-              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-red-800/50 rounded-b-lg shadow-lg bg-gradient-to-t from-red-500/60 via-black/40 to-black/50 text-white w-full flex-grow min-h-0`}
+              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-red-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-red-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
             >
               {data.isFirstScorer1 && !data.gameEnded && (
                 <div
@@ -337,14 +335,15 @@ export default function DisplayPage() {
           </div>
         </div>
 
-        {/* Kolom Tengah: Timer, Tatami, Logo */}
-        {/* PERUBAHAN: Padding horizontal diperlebar (px-10) */}
+        {/* Kolom Tengah: Timer & Tatami */}
+        {/* --- PERUBAHAN 1: Container diubah menjadi grid dengan 3 baris sama tinggi --- */}
         <div
-          className={`flex flex-col justify-between items-center h-full p-4 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
+          className={`grid grid-rows-3 h-full p-4 px-10 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
             data.gameEnded ? "opacity-0" : "opacity-100"
           }`}
         >
-          <div className="text-center flex-shrink-0">
+          {/* --- PERUBAHAN 2: Info Tatami ditempatkan di baris 1, rata atas-tengah --- */}
+          <div className="text-center self-start justify-self-center">
             <div className="text-4xl lg:text-6xl font-bold text-gray-300 tracking-widest montserrat-bold">
               {data.tatamiLabel || "TATAMI"}
             </div>
@@ -353,7 +352,8 @@ export default function DisplayPage() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center">
+          {/* --- PERUBAHAN 3: Timer ditempatkan di baris 2, pas di tengah selnya --- */}
+          <div className="flex flex-col items-center place-self-center">
             <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-5 py-3 md:px-8 md:py-5">
               <h2 className="font-mono font-bold tabular-nums leading-none text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] flex items-baseline justify-center">
                 <span>{mainTimeDisplay}</span>
@@ -366,24 +366,18 @@ export default function DisplayPage() {
               </h2>
             </div>
             {data.matchLabel && (
-              <p className="montserrat font-bold text-xl md:text-2xl lg:text-3xl text-yellow-400 montserrat-bold tracking-widest mt-3 uppercase text-center">
+              <p className="montserrat font-bold text-xl md:text-2xl lg:text-3xl text-yellow-400 tracking-widest mt-3 uppercase text-center">
                 {data.matchLabel}
               </p>
             )}
           </div>
 
-          <div className="w-28 h-28 lg:w-40 lg:h-40 flex items-center justify-center flex-shrink-0 mb-10">
-            <img
-              src={logo}
-              alt="Logo"
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
+          {/* Baris ke-3 sengaja dibiarkan kosong */}
         </div>
 
         {/* Kolom Kanan: Pemain 2 */}
         <div
-          className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out ${
+          className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out min-w-0 ${
             data.gameEnded && data.winner && data.winner === data.player2Name
               ? "bg-green-700/20 rounded-lg"
               : ""
@@ -394,25 +388,19 @@ export default function DisplayPage() {
           }`}
         >
           <div className="flex-grow flex flex-col min-h-0">
-            <div
-              className={`montserrat flex flex-col items-center justify-center w-full px-3 py-2 bg-gray-900/70 backdrop-blur-sm border-t border-x border-gray-700 rounded-t-lg shadow-lg flex-shrink-0`}
-            >
-              <h2
-                className="text-xl sm:text-2xl md:text-4xl lg:text-5xl montserrat-bold font-bold text-center w-full truncate"
-                title={data.player2Name}
-              >
-                {data.player2Name.toUpperCase()}
-              </h2>
-              {data.player2From && (
-                // PERUBAHAN: Menambahkan spasi (mt-1) antara nama dan lokasi
-                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-2xl lg:text-3xl text-gray-300 w-full truncate text-center mt-1">
-                  {data.player2From.toUpperCase()}
-                </p>
-              )}
-            </div>
+            <div className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate" title={data.player2Name}>
+                                {data.player2Name.toUpperCase()}
+                            </h2>
+                            {data.player2From && (
+                                <p className="montserrat-medium font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 w-full truncate text-center mt-1">
+                                    {data.player2From.toUpperCase()}
+                                </p>
+                            )}
+                        </div>
 
             <div
-              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-t from-blue-500/60 via-black/40 to-black/50 text-white w-full flex-grow min-h-0`}
+              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-blue-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
             >
               {data.isFirstScorer2 && !data.gameEnded && (
                 <div
@@ -450,7 +438,7 @@ export default function DisplayPage() {
               <div className="bg-gray-800/90 border border-gray-700 text-center px-3 py-4 sm:px-4 sm:py-5 rounded-lg text-white flex flex-col gap-y-1.5 sm:gap-y-2 mb-4 sm:mb-5">
                 {data.winner ? (
                   <>
-                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
+                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-7xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
                       {data.winner.toUpperCase()} WIN
                     </p>
                     <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
