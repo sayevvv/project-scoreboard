@@ -482,14 +482,14 @@ export default function DisplayPage() {
                 >
                   <header>
                     <h3
-                      className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
+                      className="sm:text-3xl lg:text-4xl xl:text-5xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
                       title={data.player1Name}
                     >
                       {data.player1Name.toUpperCase()}
                     </h3>
                     {data.player1From && (
                       <h4
-                        className="text-lg sm:text-xl md:text-2xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
+                        className="sm:text-xl lg:text-2xl xl:text-3xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
                         title={data.player1From.toUpperCase()}
                       >
                         {data.player1From.toUpperCase()}
@@ -536,14 +536,14 @@ export default function DisplayPage() {
                 >
                   <header>
                     <h3
-                      className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
+                      className="sm:text-3xl lg:text-4xl xl:text-5xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
                       title={data.player2Name}
                     >
                       {data.player2Name.toUpperCase()}
                     </h3>
                     {data.player2From && (
                       <h4
-                        className="text-lg sm:text-xl md:text-2xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
+                        className="sm:text-xl lg:text-2xl xl:text-3xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
                         title={data.player2From.toUpperCase()}
                       >
                         {data.player2From.toUpperCase()}

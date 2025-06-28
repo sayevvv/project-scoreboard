@@ -32,7 +32,8 @@ export default function Timer({
     onNewGame,
     onChangeTime,
     onAdjustTime,
-    formatTime
+    formatTime,
+    onTimerFirstStart 
 }: Props) {
     // State untuk modal, tidak berubah
     const [showResetConfirmation, setShowResetConfirmation] = useState(false);
@@ -46,10 +47,11 @@ export default function Timer({
     const rapidChangeIntervalRef = useRef<number | null>(null);
 
     // Semua fungsi handler (logika) tidak berubah dari versi sebelumnya
-    const handlePlusMinusAdjust = useCallback((amount: number) => {
-        if (!onAdjustTime || isRunning) return;
+     const handlePlusMinusAdjust = useCallback((amount: number) => {
+        // Hapus kondisi '|| isRunning' agar fungsi ini bisa berjalan kapan saja
+        if (!onAdjustTime) return; 
         onAdjustTime(amount);
-    }, [onAdjustTime, isRunning]);
+    }, [onAdjustTime]);
 
     const stopLongPress = useCallback(() => {
         if (longPressTimeoutRef.current) clearTimeout(longPressTimeoutRef.current);
@@ -59,7 +61,7 @@ export default function Timer({
     }, []);
 
     const startLongPress = useCallback((amount: number) => {
-        handlePlusMinusAdjust(amount);
+        handlePlusMinusAdjust(amount); 
         longPressTimeoutRef.current = window.setTimeout(() => {
             rapidChangeIntervalRef.current = window.setInterval(() => {
                 handlePlusMinusAdjust(amount);
@@ -80,13 +82,16 @@ export default function Timer({
         }
     }, [timeLeft, showChangeTimeModal]);
 
-    const toggleTimer = () => {
-        if (!disabled) {
-            if ((timeLeft <= 0 && (centisecondsLeft ?? 0) <= 0) && !isRunning) return;
-            setIsRunning(prev => !prev);
-        }
-    };
+   const toggleTimer = () => {
+        if (disabled) return;
+        if ((timeLeft <= 0 && (centisecondsLeft ?? 0) <= 0) && !isRunning) return;
 
+        if (!isRunning && onTimerFirstStart) {
+            onTimerFirstStart();
+        }
+        
+        setIsRunning(prev => !prev);
+    };
     const handleResetTime = () => {
         if (!disabled && !isRunning) {
             if (onChangeTime) onChangeTime(initialDuration);
@@ -164,33 +169,31 @@ export default function Timer({
                 </div>
             )}
 
-            {/* --- PERUBAHAN UTAMA PADA LAYOUT KONTROL --- */}
             <div className={`flex w-full max-w-xl flex-col items-center mx-auto text-center py-3 ${disabled ? 'opacity-70' : ''}`}>
-                {/* Tampilan Waktu (Sama seperti desain lama) */}
+                {/* Tampilan Waktu tidak berubah */}
                 <div className="tabular-nums text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-mono font-bold text-white mb-4 px-4 py-2 bg-gray-900 rounded-xl shadow-lg border border-gray-700 w-auto min-w-[320px] sm:min-w-[420px] md:min-w-[500px]">
                     {formatTime(timeLeft, centisecondsLeft)}
                 </div>
 
-                {/* Kontainer Tombol: Menggabungkan desain lama dan fungsionalitas baru */}
-                <div className={`flex justify-center items-center p-3 rounded-2xl bg-gray-900 shadow-lg border border-gray-700 w-auto transition-all duration-300
-                    ${!isRunning && !disabled ? 'flex-col gap-3' : 'flex-row gap-2 sm:gap-3 md:gap-4'}
-                `}>
-                    {/* Baris 1: Akan selalu ada, namun isinya berubah */}
+                {/* --- PERUBAHAN UTAMA DIMULAI DI SINI --- */}
+                {/* 1. Container utama dibuat konsisten (flex-col) */}
+                <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-gray-900 shadow-lg border border-gray-700 w-auto gap-3">
+                    
+                    {/* Baris 1: Kontrol Utama (+, -, Play/Pause) */}
                     <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
-                        {/* Tombol Kurang (Hanya muncul saat pause) */}
-                        {!isRunning && !disabled && (
-                            <button
-                                // PERUBAHAN: Logika onMouseDown tidak diubah, karena sudah memanggil handler yang tepat
-                                onMouseDown={() => startLongPress(-1)} onMouseUp={stopLongPress} onMouseLeave={stopLongPress}
-                                onTouchStart={() => startLongPress(-1)} onTouchEnd={stopLongPress}
-                                title="Kurangi 1 Detik"
-                                className="p-2 sm:p-3 rounded-full bg-gray-700 text-white transition hover:bg-gray-600 active:bg-gray-500"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>
-                            </button>
-                        )}
+                        {/* Tombol Kurang */}
+                        <button
+                            onMouseDown={() => startLongPress(-1)} onMouseUp={stopLongPress} onMouseLeave={stopLongPress}
+                            onTouchStart={() => startLongPress(-1)} onTouchEnd={stopLongPress}
+                            title="Kurangi 1 Detik"
+                            // --- PERUBAHAN 1: Hapus 'isRunning' dari kondisi disabled ---
+                            disabled={disabled}
+                            className="p-2 sm:p-3 rounded-full bg-gray-700 text-white transition hover:bg-gray-600 active:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>
+                        </button>
 
-                        {/* Tombol Utama Play/Pause */}
+                        {/* Tombol Utama Play/Pause (Logika tidak berubah) */}
                         <button
                             onClick={toggleTimer}
                             disabled={disabled || (timeLeft <= 0 && (centisecondsLeft ?? 0) <= 0 && !isRunning)}
@@ -203,36 +206,44 @@ export default function Timer({
                                 : <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" /></svg>}
                         </button>
                         
-                        {/* Tombol Tambah (Hanya muncul saat pause) */}
-                         {!isRunning && !disabled && (
-                            <button
-                                onMouseDown={() => startLongPress(1)} onMouseUp={stopLongPress} onMouseLeave={stopLongPress}
-                                onTouchStart={() => startLongPress(1)} onTouchEnd={stopLongPress}
-                                title="Tambah 1 Detik"
-                                className="p-2 sm:p-3 rounded-full bg-gray-700 text-white transition hover:bg-gray-600 active:bg-gray-500"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" /></svg>
+                        {/* Tombol Tambah */}
+                        <button
+                            onMouseDown={() => startLongPress(1)} onMouseUp={stopLongPress} onMouseLeave={stopLongPress}
+                            onTouchStart={() => startLongPress(1)} onTouchEnd={stopLongPress}
+                            title="Tambah 1 Detik"
+                            // --- PERUBAHAN 2: Hapus 'isRunning' dari kondisi disabled ---
+                            disabled={disabled}
+                            className="p-2 sm:p-3 rounded-full bg-gray-700 text-white transition hover:bg-gray-600 active:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" /></svg>
+                        </button>
+                    </div>
+
+                    {/* Baris 2: Kontrol Utilitas */}
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
+                        <button onClick={openChangeTimeModal} title="Ubah Waktu Permainan" 
+                            // 4. Tombol dinonaktifkan saat timer berjalan atau jika game berakhir
+                            disabled={isRunning || disabled}
+                            className="p-2 sm:p-3 rounded-full bg-teal-500 hover:bg-teal-600 text-white transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </button>
+                        <button onClick={() => setShowResetConfirmation(true)} title={`Reset Waktu ke ${formatTime(initialDuration)}`} 
+                             // 5. Tombol dinonaktifkan saat timer berjalan atau jika game berakhir
+                            disabled={isRunning || disabled}
+                            className="p-2 sm:p-3 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white transition disabled:opacity-50 disabled:cursor-not-allowed">
+                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l5 5M20 20l-5-5M4 20h5v-5M20 4h-5v5" /></svg>
+                        </button>
+                        {onNewGame && (
+                            <button onClick={() => setShowNewGameConfirmation(true)} title="Game Baru" 
+                                 // 6. Tombol dinonaktifkan saat timer berjalan atau jika game berakhir
+                                disabled={isRunning || disabled}
+                                className="p-2 sm:p-3 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </button>
                         )}
                     </div>
-
-                    {/* Baris 2: Utilitas (Hanya muncul saat pause) */}
-                    {!isRunning && !disabled && (
-                        <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
-                            <button onClick={openChangeTimeModal} title="Ubah Waktu Permainan" className="p-2 sm:p-3 rounded-full bg-teal-500 hover:bg-teal-600 text-white transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </button>
-                            <button onClick={() => setShowResetConfirmation(true)} title={`Reset Waktu ke ${formatTime(initialDuration)}`} className="p-2 sm:p-3 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white transition">
-                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l5 5M20 20l-5-5M4 20h5v-5M20 4h-5v5" /></svg>
-                            </button>
-                            {onNewGame && (
-                                <button onClick={() => setShowNewGameConfirmation(true)} title="Game Baru" className="p-2 sm:p-3 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition">
-                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                </button>
-                            )}
-                        </div>
-                    )}
                 </div>
+                 {/* --- PERUBAHAN UTAMA SELESAI --- */}
             </div>
         </>
     );

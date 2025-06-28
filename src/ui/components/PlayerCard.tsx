@@ -189,7 +189,7 @@ export default function PlayerCard({
                   disabled={disabled}
                   title="Hapus Status Skor Pertama Pemain Ini"
                 >
-                  Batalkan Skor Awal Manual
+                  BATALKAN SENSHU
                 </button>
               ) : (
                 <button
@@ -198,7 +198,7 @@ export default function PlayerCard({
                   disabled={disabled}
                   title="Tandai Pemain Ini Sebagai Pencetak Skor Pertama"
                 >
-                  Set Skor Awal Manual
+                  SET SENSHU
                 </button>
               )}
             </div>

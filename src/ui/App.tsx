@@ -150,10 +150,10 @@ export default function App() {
     } else {
       if (firstScorer === 1) {
         finalWinner = player1;
-        finalReason = `${player1} menang skor duluan (seri ${score1}-${score2}), permainan diselesaikan`;
+        finalReason = `${player1} menang SENSHU (seri ${score1}-${score2}), permainan diselesaikan`;
       } else if (firstScorer === 2) {
         finalWinner = player2;
-        finalReason = `${player2} menang skor duluan (seri ${score1}-${score2}), permainan diselesaikan`;
+        finalReason = `${player2} menang SENSHU (seri ${score1}-${score2}), permainan diselesaikan`;
       } else {
         finalReason = `Permainan diselesaikan dengan skor seri (${score1}-${score2})`;
       }
@@ -161,6 +161,48 @@ export default function App() {
     endGame(finalWinner, finalReason);
     setShowEndConfirmation(false);
   }, [score1, score2, player1, player2, endGame, firstScorer]);
+
+  useEffect(() => {
+    if (timerEverStarted && !gameEnded && !isRunning && timeLeft <= 0) {
+      console.log("Waktu habis, menentukan pemenang...");
+
+      let finalWinner: string | null = null;
+      let finalReason = "Waktu Habis";
+
+      // Logika penentuan pemenang (sama seperti di handleManualGameEnd)
+      if (score1 > score2) {
+        finalWinner = player1;
+        finalReason = `${player1} menang karena unggul skor saat waktu habis`;
+      } else if (score2 > score1) {
+        finalWinner = player2;
+        finalReason = `${player2} menang karena unggul skor saat waktu habis`;
+      } else {
+        // Jika skor seri, gunakan aturan SENSHU (skor pertama)
+        if (firstScorer === 1) {
+          finalWinner = player1;
+          finalReason = `${player1} menang SENSHU (seri ${score1}-${score2}) saat waktu habis`;
+        } else if (firstScorer === 2) {
+          finalWinner = player2;
+          finalReason = `${player2} menang SENSHU (seri ${score1}-${score2}) saat waktu habis`;
+        } else {
+          finalReason = `Waktu habis dengan skor seri (${score1}-${score2})`;
+        }
+      }
+
+      endGame(finalWinner, finalReason);
+    }
+  }, [
+    timeLeft,
+    isRunning,
+    gameEnded,
+    timerEverStarted,
+    score1,
+    score2,
+    firstScorer,
+    player1,
+    player2,
+    endGame,
+  ]);
 
   const handleSetupSubmit = useCallback(
     ({
@@ -227,7 +269,6 @@ export default function App() {
   const updateScore = useCallback(
     (player: 1 | 2, points: number) => {
       if (!timerEverStarted || gameEnded) return;
-      if (firstScorer === null && points > 0) setFirstScorer(player);
       const scoreUpdater = (currentScore: number, pName: string) => {
         const newScore = Math.max(0, currentScore + points);
         if (newScore >= maxScore && maxScore > 0 && !gameEnded) {
@@ -238,15 +279,7 @@ export default function App() {
       if (player === 1) setScore1((s) => scoreUpdater(s, player1));
       else setScore2((s) => scoreUpdater(s, player2));
     },
-    [
-      timerEverStarted,
-      gameEnded,
-      maxScore,
-      player1,
-      player2,
-      endGame,
-      firstScorer,
-    ]
+    [timerEverStarted, gameEnded, maxScore, player1, player2, endGame]
   );
 
   const handleSetFirstScorerManually = useCallback(
@@ -257,14 +290,50 @@ export default function App() {
     [timerEverStarted, gameEnded]
   );
 
+  useEffect(() => {
+    if (!timerEverStarted || gameEnded) return;
+
+    const scoreDifference = Math.abs(score1 - score2);
+
+    if (scoreDifference >= 8) {
+      const currentWinner = score1 > score2 ? player1 : player2;
+      endGame(currentWinner, `Menang karena selisih 8 poin`);
+    }
+  }, [score1, score2, timerEverStarted, gameEnded, player1, player2, endGame]);
+
   const updateFouls = useCallback(
     (player: 1 | 2, change: number) => {
+      // Guard clause tidak berubah
       if (!timerEverStarted || gameEnded || maxFoul <= 0) return;
-      if (player === 1)
-        setFoul1((cf) => Math.max(0, Math.min(maxFoul, cf + change)));
-      else setFoul2((cf) => Math.max(0, Math.min(maxFoul, cf + change)));
+
+      const foulUpdater = (currentFouls: number) => {
+        const newFouls = Math.max(0, Math.min(maxFoul, currentFouls + change));
+
+        // --- PERUBAHAN DIMULAI DI SINI ---
+        // Cek apakah foul baru mencapai batas maksimal
+        if (newFouls >= maxFoul) {
+          // Tentukan pemenang dan alasan berdasarkan siapa yang melakukan pelanggaran
+          if (player === 1) {
+            // Jika pemain 1 mencapai max foul, pemain 2 menang
+            endGame(player2, `${player1} kalah karena pelanggaran`);
+          } else {
+            // Jika pemain 2 mencapai max foul, pemain 1 menang
+            endGame(player1, `${player2} kalah karena pelanggaran`);
+          }
+        }
+        // --- PERUBAHAN SELESAI ---
+
+        return newFouls;
+      };
+
+      if (player === 1) {
+        setFoul1(foulUpdater);
+      } else {
+        setFoul2(foulUpdater);
+      }
     },
-    [timerEverStarted, gameEnded, maxFoul]
+    // Tambahkan player1 dan player2 ke dependency array karena digunakan di endGame
+    [timerEverStarted, gameEnded, maxFoul, endGame, player1, player2]
   );
 
   const handleTimerFirstStart = useCallback(() => {
@@ -289,22 +358,28 @@ export default function App() {
 
   const adjustTimeBySeconds = useCallback(
     (amount: number) => {
-      if (isRunning || gameEnded) return;
+      // Tetap tidak bisa diubah jika game sudah berakhir
+      if (gameEnded) return;
 
-      // Menggunakan `setTimeLeft` dengan sebuah fungsi di dalamnya.
-      // `prevTimeLeft` dijamin oleh React sebagai nilai state yang paling baru.
-      setTimeLeft((prevTimeLeft) => {
-        const newTotalSeconds = Math.max(0, prevTimeLeft + amount);
-
-        // Perbarui ref internal di dalam fungsi ini juga agar tetap sinkron.
-        // Kita butuh `centisecondsLeft` di sini, dan karena nilainya tidak sering berubah,
-        // aman untuk mengambilnya dari closure useCallback.
-        pausedTimeLeftRef.current =
-          newTotalSeconds * 1000 + centisecondsLeft * 10;
-
-        return newTotalSeconds;
-      });
+      if (isRunning) {
+        // --- LOGIKA BARU SAAT TIMER BERJALAN ---
+        // Jika timer berjalan, kita sesuaikan 'target akhir' waktunya.
+        if (targetEndTimeRef.current) {
+          targetEndTimeRef.current += amount * 1000;
+        }
+      } else {
+        // --- LOGIKA LAMA SAAT TIMER PAUSE (TETAP SAMA) ---
+        // Jika timer dijeda, kita sesuaikan state timeLeft dan ref paused.
+        setTimeLeft((prevTimeLeft) => {
+          const newTotalSeconds = Math.max(0, prevTimeLeft + amount);
+          // Perbarui juga ref untuk konsistensi saat di-pause lagi
+          pausedTimeLeftRef.current =
+            newTotalSeconds * 1000 + centisecondsLeft * 10;
+          return newTotalSeconds;
+        });
+      }
     },
+    // Pastikan isRunning ada di dependency array
     [isRunning, gameEnded, centisecondsLeft]
   );
 
@@ -490,55 +565,45 @@ export default function App() {
     centisecondsLeft,
   ]);
 
+  // Useeffect timer
   useEffect(() => {
     let intervalId: number | undefined;
 
     if (isRunning && !gameEnded) {
-      if (!timerEverStarted) {
-        setTimerEverStarted(true);
-      }
+      // Bagian ini dijalankan HANYA SEKALI saat timer dimulai
       if (targetEndTimeRef.current === null) {
         targetEndTimeRef.current = Date.now() + pausedTimeLeftRef.current;
-        const displaySeconds = Math.floor(pausedTimeLeftRef.current / 1000);
-        const displayCs = Math.floor((pausedTimeLeftRef.current % 1000) / 10);
-        if (timeLeft !== displaySeconds || centisecondsLeft !== displayCs) {
-          setTimeLeft(displaySeconds);
-          setCentisecondsLeft(displayCs);
-        }
       }
 
+      // Interval ini sekarang stabil dan tidak akan dibuat ulang di setiap tick
       intervalId = window.setInterval(() => {
-        if (targetEndTimeRef.current === null) {
-          setIsRunning(false);
-          return;
-        }
+        if (targetEndTimeRef.current === null) return;
+
         const now = Date.now();
         const remainingMs = Math.max(0, targetEndTimeRef.current - now);
-        setTimeLeft(Math.floor(remainingMs / 1000)); // PERUBAHAN: Kalkulasi utama dari milidetik ke sentidetik
+
+        setTimeLeft(Math.floor(remainingMs / 1000));
         setCentisecondsLeft(Math.floor((remainingMs % 1000) / 10));
 
         if (remainingMs <= 0) {
           setIsRunning(false);
+          // Jangan panggil endGame di sini, biarkan useEffect lain yang bergantung pada timeLeft menanganinya
         }
       }, TIMER_UI_UPDATE_INTERVAL_MS);
-    } else {
-      if (intervalId) clearInterval(intervalId);
-      if (!isRunning && targetEndTimeRef.current !== null && !gameEnded) {
-        const remainingMsOnPause = Math.max(
-          0,
-          targetEndTimeRef.current - Date.now()
-        );
-        pausedTimeLeftRef.current = remainingMsOnPause;
-        setTimeLeft(Math.floor(remainingMsOnPause / 1000));
-        setCentisecondsLeft(Math.floor((remainingMsOnPause % 1000) / 10));
-      }
-      targetEndTimeRef.current = null;
+    } else if (!isRunning && targetEndTimeRef.current !== null) {
+      // Bagian ini dijalankan HANYA SEKALI saat timer di-pause
+      const remainingMsOnPause = Math.max(
+        0,
+        targetEndTimeRef.current - Date.now()
+      );
+      pausedTimeLeftRef.current = remainingMsOnPause;
+      targetEndTimeRef.current = null; // Reset target agar bisa dihitung ulang saat play lagi
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isRunning, gameEnded, timerEverStarted, timeLeft, centisecondsLeft]);
+  }, [isRunning, gameEnded]);
 
   // BARU: Fungsi untuk membuka display window via IPC
   const handleOpenDisplayWindow = () => {
@@ -599,24 +664,24 @@ export default function App() {
                 {winner ? (
                   <>
                     {/* Ukuran font dibuat responsif */}
-                    <p className="text-3xl font-semibold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-7xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
                       {winner.toUpperCase()} WIN
                     </p>
-                    <p className="text-sm text-gray-300 sm:text-base md:text-lg lg:text-xl">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
                       {endReason}
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-3xl font-semibold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-                      Hasil Seri!
+                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
+                      HASIL SERI!
                     </p>
-                    <p className="text-sm text-gray-300 sm:text-base md:text-lg lg:text-xl">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
                       {endReason}
                     </p>
                   </>
                 )}
-                <p className="montserrat-semibold mt-2 text-sm font-semibold text-gray-300 sm:text-base md:text-lg">
+                <p className="text-base sm:text-lg md:text-xl mt-2 sm:mt-3 text-gray-300 montserrat-semibold font-semibold">
                   Durasi Permainan:{" "}
                   {formatTime(
                     Math.floor(elapsedTime),
@@ -641,7 +706,7 @@ export default function App() {
                   <header>
                     {/* Ukuran font nama pemain dibuat responsif */}
                     <h3
-                      className="w-full truncate text-2xl font-semibold sm:text-3xl lg:text-4xl xl:text-5xl"
+                      className="w-full truncate text-2xl montserrat-bold font-bold sm:text-3xl lg:text-4xl xl:text-5xl"
                       title={player1}
                     >
                       {player1.toUpperCase()}
@@ -657,20 +722,24 @@ export default function App() {
                   </header>
                   {firstScorer === 1 && (
                     <span className="absolute top-2 right-2 rounded bg-green-500 px-2 py-1 text-xs font-semibold text-white sm:text-sm">
-                      SKOR AWAL
+                      SENSHU
                     </span>
                   )}
                   {/* Ukuran font skor dan foul dibuat responsif */}
-                  <section className="mt-4 flex w-full flex-col gap-3 text-xl sm:text-2xl md:text-3xl">
+                  <section className="mt-4 flex w-full flex-col gap-3 text-2xl sm:text-3xl md:text-4xl">
                     <div className="flex w-full items-center justify-between">
-                      <p className="font-medium text-white">SKOR :</p>
+                      <p className="text-gray-100/90 montserrat-medium">
+                        SKOR :
+                      </p>
                       <p className="karantina-regular text-6xl font-bold sm:text-7xl md:text-8xl">
                         {score1}
                       </p>
                     </div>
                     {maxFoul > 0 && (
                       <div className="flex w-full items-center justify-between">
-                        <p className="font-medium text-white">FOUL :</p>
+                        <p className="text-gray-100/90 montserrat-medium">
+                          FOUL :
+                        </p>
                         <p className="karantina-regular text-6xl font-bold text-yellow-300 sm:text-7xl md:text-8xl">
                           {foul1}
                         </p>
@@ -689,7 +758,7 @@ export default function App() {
                 >
                   <header>
                     <h3
-                      className="w-full truncate text-2xl font-semibold sm:text-3xl lg:text-4xl xl:text-5xl"
+                      className="w-full truncate text-2xl montserrat-bold font-bold sm:text-3xl lg:text-4xl xl:text-5xl"
                       title={player2}
                     >
                       {player2.toUpperCase()}
@@ -705,19 +774,23 @@ export default function App() {
                   </header>
                   {firstScorer === 2 && (
                     <span className="absolute top-2 right-2 rounded bg-green-500 px-2 py-1 text-xs font-semibold text-white sm:text-sm">
-                      SKOR AWAL
+                      SENSHU
                     </span>
                   )}
-                  <section className="mt-4 flex w-full flex-col gap-3 text-xl sm:text-2xl md:text-3xl">
+                  <section className="mt-4 flex w-full flex-col gap-3 text-2xl sm:text-3xl md:text-4xl">
                     <div className="flex w-full items-center justify-between">
-                      <p className="font-medium text-white">SKOR :</p>
+                      <p className="text-gray-100/90 montserrat-medium">
+                        SKOR :
+                      </p>
                       <p className="karantina-regular text-6xl font-bold sm:text-7xl md:text-8xl">
                         {score2}
                       </p>
                     </div>
                     {maxFoul > 0 && (
                       <div className="flex w-full items-center justify-between">
-                        <p className="font-medium text-white">FOUL :</p>
+                        <p className="text-gray-100/90 montserrat-medium">
+                          FOUL :
+                        </p>
                         <p className="karantina-regular text-6xl font-bold text-yellow-300 sm:text-7xl md:text-8xl">
                           {foul2}
                         </p>
