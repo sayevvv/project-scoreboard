@@ -81,6 +81,8 @@ export default function App() {
   const targetEndTimeRef = useRef<number | null>(null); // Timestamp kapan timer seharusnya berakhir
   const pausedTimeLeftRef = useRef<number>(initialDuration * 1000); // Sisa waktu dalam ms saat di-pause
 
+  const stopwatchStartTimeRef = useRef<number | null>(null);
+
   // ... (semua useEffect dan fungsi yang sudah ada sebelumnya) ...
   // useEffect untuk Splash Screen
   useEffect(() => {
@@ -103,38 +105,20 @@ export default function App() {
     (winnerName: string | null, reason: string) => {
       if (gameEnded) return;
 
-      let currentElapsedTime = 0;
-      if (timerEverStarted) {
-        const totalDurationMs = initialDuration * 1000;
-        let remainingMs = 0;
-
-        // Logika baru: Cek targetEndTimeRef sebagai sumber kebenaran utama.
-        // Jika ada, berarti timer baru saja berjalan. Kita bisa menghitung sisa waktu saat ini.
-        if (targetEndTimeRef.current) {
-          remainingMs = Math.max(0, targetEndTimeRef.current - Date.now());
-        } else {
-          // Jika tidak ada, berarti timer sudah dalam keadaan pause sebelumnya.
-          // Gunakan nilai terakhir yang tersimpan di pausedTimeLeftRef.
-          remainingMs = pausedTimeLeftRef.current;
-        }
-
-        currentElapsedTime = (totalDurationMs - remainingMs) / 1000;
-      }
-      setElapsedTime(Math.max(0, currentElapsedTime));
-
-      setIsRunning(false);
-      targetEndTimeRef.current = null;
+      setIsRunning(false); // Ini akan memicu useEffect [isRunning] untuk update terakhir elapsedTime
       setWinner(winnerName);
       setEndReason(reason);
       setGameEnded(true);
 
+      // Sisa logika tetap sama
+      targetEndTimeRef.current = null;
       if (reason.toLowerCase().includes("waktu habis")) {
         setTimeLeft(0);
         setCentisecondsLeft(0);
         pausedTimeLeftRef.current = 0;
       }
     },
-    [gameEnded, initialDuration, timerEverStarted]
+    [gameEnded] // Dependensi disederhanakan
   );
 
   const handleManualGameEnd = useCallback(() => {
@@ -570,34 +554,43 @@ export default function App() {
     let intervalId: number | undefined;
 
     if (isRunning && !gameEnded) {
-      // Bagian ini dijalankan HANYA SEKALI saat timer dimulai
+      // Logika untuk timer utama (countdown)
       if (targetEndTimeRef.current === null) {
         targetEndTimeRef.current = Date.now() + pausedTimeLeftRef.current;
       }
 
-      // Interval ini sekarang stabil dan tidak akan dibuat ulang di setiap tick
+      // Logika untuk stopwatch durasi (elapsed time)
+      if (stopwatchStartTimeRef.current === null) {
+        stopwatchStartTimeRef.current = Date.now();
+      }
+
       intervalId = window.setInterval(() => {
         if (targetEndTimeRef.current === null) return;
-
         const now = Date.now();
         const remainingMs = Math.max(0, targetEndTimeRef.current - now);
-
         setTimeLeft(Math.floor(remainingMs / 1000));
         setCentisecondsLeft(Math.floor((remainingMs % 1000) / 10));
-
         if (remainingMs <= 0) {
           setIsRunning(false);
-          // Jangan panggil endGame di sini, biarkan useEffect lain yang bergantung pada timeLeft menanganinya
         }
       }, TIMER_UI_UPDATE_INTERVAL_MS);
-    } else if (!isRunning && targetEndTimeRef.current !== null) {
-      // Bagian ini dijalankan HANYA SEKALI saat timer di-pause
-      const remainingMsOnPause = Math.max(
-        0,
-        targetEndTimeRef.current - Date.now()
-      );
-      pausedTimeLeftRef.current = remainingMsOnPause;
-      targetEndTimeRef.current = null; // Reset target agar bisa dihitung ulang saat play lagi
+    } else {
+      // Logika saat timer di-pause atau dihentikan
+      if (targetEndTimeRef.current !== null) {
+        // Jika timer baru saja berhenti
+        pausedTimeLeftRef.current = Math.max(
+          0,
+          targetEndTimeRef.current - Date.now()
+        );
+        targetEndTimeRef.current = null;
+      }
+      if (stopwatchStartTimeRef.current !== null) {
+        // Jika stopwatch baru saja berhenti
+        const segmentDuration =
+          (Date.now() - stopwatchStartTimeRef.current) / 1000;
+        setElapsedTime((prev) => prev + segmentDuration);
+        stopwatchStartTimeRef.current = null;
+      }
     }
 
     return () => {
