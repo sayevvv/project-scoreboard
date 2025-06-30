@@ -511,7 +511,7 @@ export default function DisplayPage() {
                       <p className="text-gray-100/90 montserrat-medium">
                         SKOR :
                       </p>
-                      <p className="karantina-bold text-4xl sm:text-5xl md:text-6xl text-white">
+                      <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-white">
                         {data.score1}
                       </p>
                     </div>
@@ -520,7 +520,7 @@ export default function DisplayPage() {
                         <p className="text-gray-100/90 montserrat-medium">
                           FOUL :
                         </p>
-                        <p className="karantina-bold text-4xl sm:text-5xl md:text-6xl text-yellow-300">
+                        <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-yellow-300">
                           {data.foul1}
                         </p>
                       </div>
@@ -565,7 +565,7 @@ export default function DisplayPage() {
                       <p className="text-gray-100/90 montserrat-medium">
                         SKOR :
                       </p>
-                      <p className="karantina-bold text-4xl sm:text-5xl md:text-6xl text-white">
+                      <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-white">
                         {data.score2}
                       </p>
                     </div>
@@ -574,7 +574,7 @@ export default function DisplayPage() {
                         <p className="text-gray-100/90 montserrat-medium">
                           FOUL :
                         </p>
-                        <p className="karantina-bold text-4xl sm:text-5xl md:text-6xl text-yellow-300">
+                        <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-yellow-300">
                           {data.foul2}
                         </p>
                       </div>
