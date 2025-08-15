@@ -305,7 +305,7 @@ export default function DisplayPage() {
         >
           <div className="flex-grow flex flex-col min-h-0">
             <div
-              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-r from-red-600 to-red-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-red-400`}
+              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}
             >
               <h2
                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
@@ -322,7 +322,7 @@ export default function DisplayPage() {
             </div>
 
             <div
-              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-red-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-red-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
+              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-blue-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
             >
               {data.isFirstScorer1 && !data.gameEnded && (
                 <div
@@ -404,7 +404,7 @@ export default function DisplayPage() {
         >
           <div className="flex-grow flex flex-col min-h-0">
             <div
-              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}
+              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-red-600 to-red-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-red-400`}
             >
               <h2
                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
@@ -420,7 +420,7 @@ export default function DisplayPage() {
             </div>
 
             <div
-              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-blue-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
+              className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-red-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-red-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
             >
               {data.isFirstScorer2 && !data.gameEnded && (
                 <div

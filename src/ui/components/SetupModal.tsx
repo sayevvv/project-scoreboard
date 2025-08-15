@@ -22,25 +22,18 @@ const MAX_LENGTH_LABEL = 15;
 const MAX_LENGTH_NUMBER = 5;
 
 export default function SetupModal({ onSubmit }: Props) {
-  const [name1, setName1] = useState("");
-  const [name2, setName2] = useState("");
+  const [name1, setName1] = useState("AO");
+  const [name2, setName2] = useState("AKA");
   const [from1, setFrom1] = useState("");
   const [from2, setFrom2] = useState("");
   const [fouls, setFouls] = useState(5);
   const [score, setScore] = useState(1000);
-  const [time, setTime] = useState(3);
+  const [time, setTime] = useState(1);
 
   const [tatamiLabel, setTatamiLabel] = useState("TATAMI");
   const [tatamiNumber, setTatamiNumber] = useState("2");
   const [matchLabel, setMatchLabel] = useState("SEMI FINAL");
-
-  // State untuk accordion
-  const [isAdvancedSettingsOpen, setIsAdvancedSettingsOpen] = useState(false);
-  // BARU: State untuk accordion tampilan
-  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
-
-  const toggleAdvancedSettings = () => setIsAdvancedSettingsOpen(!isAdvancedSettingsOpen);
-  const toggleDisplaySettings = () => setIsDisplaySettingsOpen(!isDisplaySettingsOpen);
+  const [isMatchSettingsOpen, setIsMatchSettingsOpen] = useState(false);
 
   const handleSubmit = () => {
     onSubmit({
@@ -69,198 +62,93 @@ export default function SetupModal({ onSubmit }: Props) {
             Silakan atur pertandingan sesuai keinginan Anda.
           </p>
         </header>
-        <div className="bg-gray-950 rounded-xl p-6 md:p-8 w-full shadow-lg max-w-2xl border-white border-1 text-white">
-          <div className="flex flex-col gap-5">
-            {/* Pengaturan Waktu di luar accordion */}
-            <section className="flex flex-col gap-4 justify-center items-center">
-              <label className="flex flex-col items-center justify-center text-white text-center w-fit">
-                Waktu Maksimal
-                <div className="flex items-center justify-center gap-2 mt-2 select-none relative">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTime((prev) => Math.max(prev - 1, 1)); // Minimal 1 menit
-                    }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
-                  >
-                    –
-                  </button>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={time}
-                      onChange={(e) => setTime(Math.max(1, Number(e.target.value)))} // Minimal 1 menit
-                      className="w-24 text-center px-2 py-2 pr-10 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-red-700
-                      [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    />
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm pointer-events-none">
-                      menit
-                    </span>
+
+        <div className="bg-gray-950 rounded-xl p-6 md:p-8 w-full shadow-lg max-w-5xl border-white border-1 text-white">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col gap-6">
+              {/* Waktu */}
+              <section className="flex flex-col gap-3 p-4 rounded-lg bg-slate-900">
+                <h3 className="font-semibold text-white">Waktu Maksimal</h3>
+                <label className="flex flex-col items-center justify-center text-white text-center w-full">
+                  <div className="flex items-center justify-center gap-2 select-none relative">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTime((prev) => Math.max(prev - 1, 1));
+                      }}
+                      className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
+                    >
+                      –
+                    </button>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min={1}
+                        value={time}
+                        onChange={(e) => setTime(Math.max(1, Number(e.target.value)))}
+                        className="w-24 text-center px-2 py-2 pr-10 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-700 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      />
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm pointer-events-none">menit</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTime((prev) => prev + 1);
+                      }}
+                      className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition hover:bg-slate-700"
+                    >
+                      +
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTime((prev) => prev + 1);
-                    }}
-                    className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition hover:bg-slate-700"
-                  >
-                    +
-                  </button>
-                </div>
-              </label>
-            </section>
+                </label>
+              </section>
 
-             {/* BARU: Accordion untuk Pengaturan Tampilan */}
-            <div className="w-full">
-              <button
-                type="button"
-                onClick={toggleDisplaySettings}
-                className="flex justify-between items-center w-full p-3 text-left text-white bg-slate-800 hover:bg-slate-700 rounded-lg focus:outline-none transition-colors"
-              >
-                <span className="font-medium">Pengaturan Tampilan (Opsional)</span>
-                <span className={`transform transition-transform duration-200 ${isDisplaySettingsOpen ? 'rotate-180' : 'rotate-0'}`}>
-                  ▼
-                </span>
-              </button>
-              {isDisplaySettingsOpen && (
-                <div className="p-4 mt-2 bg-slate-900 rounded-lg flex flex-col gap-4 animate-fadeIn">
-                  <label className="flex flex-col text-white w-full">
-                    Judul Tatami
-                    <input
-                      type="text"
-                      value={tatamiLabel}
-                      maxLength={MAX_LENGTH_LABEL}
-                      onChange={(e) => setTatamiLabel(e.target.value)}
-                      className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    />
-                  </label>
-                  <label className="flex flex-col text-white w-full">
-                    Nomor Tatami
-                    <input
-                      type="text"
-                      value={tatamiNumber}
-                      maxLength={MAX_LENGTH_NUMBER}
-                      onChange={(e) => setTatamiNumber(e.target.value)}
-                      className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    />
-                  </label>
-                   <label className="flex flex-col text-white w-full">
-                    Babak / Keterangan
-                    <input
-                      type="text"
-                      value={matchLabel}
-                      maxLength={MAX_LENGTH_LABEL}
-                      onChange={(e) => setMatchLabel(e.target.value)}
-                      placeholder="Contoh: FINAL, PENYISIHAN, etc."
-                      className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    />
-                  </label>
-                </div>
-              )}
+              {/* Pengaturan Tampilan */}
+              <section className="flex flex-col gap-3 p-4 rounded-lg bg-slate-900">
+                <h3 className="font-semibold text-white">Pengaturan Tampilan</h3>
+                <label className="flex flex-col text-white w-full">
+                  Judul Tatami
+                  <input
+                    type="text"
+                    value={tatamiLabel}
+                    maxLength={MAX_LENGTH_LABEL}
+                    onChange={(e) => setTatamiLabel(e.target.value)}
+                    className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </label>
+                <label className="flex flex-col text-white w-full">
+                  Nomor Tatami
+                  <input
+                    type="text"
+                    value={tatamiNumber}
+                    maxLength={MAX_LENGTH_NUMBER}
+                    onChange={(e) => setTatamiNumber(e.target.value)}
+                    className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </label>
+                <label className="flex flex-col text-white w-full">
+                  Babak / Keterangan
+                  <input
+                    type="text"
+                    value={matchLabel}
+                    maxLength={MAX_LENGTH_LABEL}
+                    onChange={(e) => setMatchLabel(e.target.value)}
+                    placeholder="Contoh: FINAL, PENYISIHAN, etc."
+                    className="px-4 py-2 mt-1 rounded-lg bg-slate-950 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </label>
+              </section>
+
+              {/* (Dipindah ke bawah dan dibuat span 2 kolom) */}
             </div>
 
-            {/* Accordion untuk Skor dan Pelanggaran */}
-            <div className="w-full">
-              <button
-                type="button"
-                onClick={toggleAdvancedSettings}
-                className="flex justify-between items-center w-full p-3 text-left text-white bg-slate-800 hover:bg-slate-700 rounded-lg focus:outline-none transition-colors"
-              >
-                <span className="font-medium">Pengaturan Skor & Pelanggaran (Opsional)</span>
-                <span className={`transform transition-transform duration-200 ${isAdvancedSettingsOpen ? 'rotate-180' : 'rotate-0'}`}>
-                  ▼
-                </span>
-              </button>
-
-              {isAdvancedSettingsOpen && (
-                <div className="p-4 mt-2 bg-slate-900 rounded-lg flex flex-col gap-4 items-center animate-fadeIn">
-                  {/* Skor Maksimal */}
-                  <label className="flex flex-col items-center justify-center text-white text-center">
-                    Skor Maksimal
-                    <div className="flex items-center justify-center gap-2 mt-2 select-none">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setScore((prev) => Math.max(prev - 1, 0));
-                        }}
-                        className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
-                      >
-                        –
-                      </button>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          value={score}
-                          onChange={(e) => setScore(Number(e.target.value))}
-                          className="w-24 text-center px-2 py-2 pr-10 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-red-700
-                          [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        />
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm pointer-events-none">
-                          poin
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setScore((prev) => prev + 1);
-                        }}
-                        className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </label>
-
-                  {/* Pelanggaran Maksimal */}
-                  <label className="flex flex-col items-center justify-center text-white text-center">
-                    Pelanggaran Maksimal{" "}
-                    <span className="text-sm text-gray-400">(0 untuk tanpa batas)</span>
-                    <div className="flex items-center justify-center gap-2 mt-2 select-none">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFouls((prev) => Math.max(prev - 1, 0));
-                        }}
-                        className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
-                      >
-                        –
-                      </button>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          value={fouls}
-                          onChange={(e) => setFouls(Number(e.target.value))}
-                          className="w-24 text-center px-2 py-2 pr-10 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-red-700
-                          [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        />
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm pointer-events-none">
-                          x
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFouls((prev) => prev + 1);
-                        }}
-                        className="w-8 h-8 flex items-center justify-center bg-slate-800 text-white rounded-full transition z-10 hover:bg-slate-700"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            {/* Pengaturan Pemain */}
-            <section className="flex flex-col md:flex-row items-center justify-around gap-4 md:gap-8">
-              <div className="flex flex-col gap-4 w-full md:w-auto">
+            {/* RIGHT COLUMN */}
+            <div className="flex flex-col gap-6">
+              <section className="flex flex-col gap-4 p-4 rounded-lg bg-slate-900">
+                <h3 className="font-semibold text-white">Data Pemain</h3>
                 <label className="flex flex-col text-white w-full">
                   Nama Pemain 1
                   <input
@@ -268,7 +156,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     value={name1}
                     maxLength={MAX_LENGTH_NAME}
                     onChange={(e) => setName1(e.target.value)}
-                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
+                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
                   />
                 </label>
                 <label className="flex flex-col text-white w-full">
@@ -279,11 +167,10 @@ export default function SetupModal({ onSubmit }: Props) {
                     value={from1}
                     maxLength={MAX_LENGTH_FROM}
                     onChange={(e) => setFrom1(e.target.value)}
-                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
+                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
                   />
                 </label>
-              </div>
-              <div className="flex flex-col gap-4 w-full md:w-auto">
+                <div className="h-px bg-slate-700/60 my-2"></div>
                 <label className="flex flex-col text-white w-full">
                   Nama Pemain 2
                   <input
@@ -291,7 +178,7 @@ export default function SetupModal({ onSubmit }: Props) {
                     value={name2}
                     maxLength={MAX_LENGTH_NAME}
                     onChange={(e) => setName2(e.target.value)}
-                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
                   />
                 </label>
                 <label className="flex flex-col text-white w-full">
@@ -302,15 +189,67 @@ export default function SetupModal({ onSubmit }: Props) {
                     value={from2}
                     maxLength={MAX_LENGTH_FROM}
                     onChange={(e) => setFrom2(e.target.value)}
-                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-blue-950 text-white focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    className="px-4 py-2 mt-1 rounded-2xl bg-gradient-to-r from-5% hover:from-30% from-slate-950 to-red-950 text-white focus:outline-none focus:ring-2 focus:ring-red-700"
                   />
                 </label>
-              </div>
-            </section>
+              </section>
+            </div>
+            {/* Pengaturan Pertandingan (Opsional) - span 2 kolom, dropdown/accordion */}
+            <div className="md:col-span-2">
+              <section className="flex flex-col gap-3 p-4 rounded-lg bg-slate-900">
+                <button
+                  type="button"
+                  onClick={() => setIsMatchSettingsOpen((v) => !v)}
+                  className="flex items-center justify-between w-full px-3 py-2 rounded-md bg-slate-800 hover:bg-slate-700 transition-colors text-white"
+                >
+                  <span className="font-semibold">
+                    Pengaturan Pertandingan <span className="text-xs text-gray-400">(Opsional)</span>
+                  </span>
+                  <span
+                    className={`transition-transform duration-200 ${isMatchSettingsOpen ? "rotate-180" : "rotate-0"}`}
+                  >
+                    ▼
+                  </span>
+                </button>
+
+                {isMatchSettingsOpen && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
+                    {/* Skor Maksimal (angka) */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white">Skor Maksimal</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={0}
+                          value={score}
+                          onChange={(e) => setScore(Number(e.target.value))}
+                          className="w-28 text-center px-2 py-2 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-sky-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                        <span className="text-white/80 text-sm">poin</span>
+                      </div>
+                    </div>
+                    {/* Pelanggaran Maksimal (angka) */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-white">Pelanggaran Maksimal</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={0}
+                          value={fouls}
+                          onChange={(e) => setFouls(Number(e.target.value))}
+                          className="w-28 text-center px-2 py-2 rounded-2xl bg-slate-950 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-sky-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                        <span className="text-white/80 text-sm">0 = tanpa batas</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </section>
+            </div>
           </div>
         </div>
+
         <button
-          // --- PERUBAHAN 4: Panggil fungsi handleSubmit ---
           onClick={handleSubmit}
           className="px-6 py-3 rounded-lg border border-blue-600 text-blue-300 hover:bg-blue-900 hover:text-white transition text-lg font-semibold flex-shrink-0"
         >

@@ -18,6 +18,8 @@ type Props = {
   setShowControls: (value: boolean | ((prevState: boolean) => boolean)) => void;
   playerIdentifier: 1 | 2; // BARU: Untuk mengidentifikasi pemain
   onSetFirstScorerManually: (player: 1 | 2 | null) => void; // BARU: Fungsi callback
+  // BARU: Paksa kontrol selalu tampil dan sembunyikan tombol toggle
+  alwaysShowControls?: boolean;
 };
 
 export default function PlayerCard({
@@ -38,11 +40,13 @@ export default function PlayerCard({
   setShowControls,
   playerIdentifier, // BARU
   onSetFirstScorerManually, // BARU
+  alwaysShowControls = false,
 }: Props) {
-  const scoreAreaPadding = showControls ? "py-10" : "py-30"; // Sesuaikan padding ini jika perlu
+  const effectiveShowControls = alwaysShowControls ? true : showControls;
+  const scoreAreaPadding = effectiveShowControls ? "py-10" : "py-30"; // Sesuaikan padding ini jika perlu
 
   return (
-    <div className="flex flex-col items-center w-full max-h-[90vh]">
+  <div className="flex flex-col items-stretch w-full h-full min-h-0">
       <div
                 // 1. Diubah menjadi flex-col dan rata tengah
                 className={`flex flex-col items-center justify-center text-center w-full p-3 bg-gradient-to-r ${gradient2} mb-2.5 flex-shrink-0 rounded-t-lg`}
@@ -104,38 +108,40 @@ export default function PlayerCard({
         </div>
       )}
 
-      <button
-        onClick={() => setShowControls((prev) => !prev)}
-        className="mt-auto mb-1 text-gray-400 hover:text-white transition text-sm flex items-center gap-1 flex-shrink-0"
-        aria-expanded={showControls}
-        aria-controls={`controls-${name.replace(/\s+/g, "-")}`}
-      >
-        Kontrol
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`h-4 w-4 transition-transform duration-300 ${
-            showControls ? "rotate-180" : "rotate-0"
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
+      {!alwaysShowControls && (
+        <button
+          onClick={() => setShowControls((prev) => !prev)}
+          className="mt-auto mb-1 text-gray-400 hover:text-white transition text-sm flex items-center gap-1 flex-shrink-0"
+          aria-expanded={effectiveShowControls}
+          aria-controls={`controls-${name.replace(/\s+/g, "-")}`}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
+          Kontrol
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-4 w-4 transition-transform duration-300 ${
+              effectiveShowControls ? "rotate-180" : "rotate-0"
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+      )}
 
       <div
         id={`controls-${name.replace(/\s+/g, "-")}`}
         className={`w-full overflow-hidden transition-[max-height,padding,margin] duration-500 ease-in-out flex-shrink-0 ${
-          showControls ? "max-h-screen mb-2" : "max-h-0 mb-0"
+          effectiveShowControls ? "max-h-screen mb-2" : "max-h-0 mb-0"
         }`}
       >
-        {showControls && (
+        {effectiveShowControls && (
           <div className="flex flex-col items-center bg-gray-800 rounded-lg p-3 shadow-lg">
             <div className="flex gap-2 mb-2 justify-around w-full">
               {[1, 2, 3].map((val) => (
