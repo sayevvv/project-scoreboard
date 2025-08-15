@@ -22,11 +22,13 @@ const initialDisplayData: ScoreboardData = {
   score1: 0,
   foul1: 0,
   isFirstScorer1: false,
+  scoreHistory1: [],
   player2Name: "PEMAIN 2",
   player2From: "",
   score2: 0,
   foul2: 0,
   isFirstScorer2: false,
+  scoreHistory2: [],
   timeLeft: 0,
   isRunning: false,
   timerEverStarted: false,
@@ -97,6 +99,8 @@ export default function DisplayPage() {
             ...initialDisplayData,
             ...parsedData,
             centisecondsLeft: parsedData.centisecondsLeft ?? 0,
+            scoreHistory1: parsedData.scoreHistory1 ?? [],
+            scoreHistory2: parsedData.scoreHistory2 ?? [],
           });
         } else {
           setData(initialDisplayData);
@@ -131,7 +135,13 @@ export default function DisplayPage() {
               "[DisplayPage] Data scoreboard diterima via IPC:",
               updatedData
             );
-            setData(updatedData);
+            setData({
+              ...initialDisplayData,
+              ...updatedData,
+              centisecondsLeft: updatedData.centisecondsLeft ?? 0,
+              scoreHistory1: updatedData.scoreHistory1 ?? [],
+              scoreHistory2: updatedData.scoreHistory2 ?? [],
+            });
           }
         );
       }
@@ -157,11 +167,13 @@ export default function DisplayPage() {
         if (event.key === LOCAL_STORAGE_KEY && event.newValue) {
           try {
             const parsedData = JSON.parse(event.newValue);
-            // MODIFIKASI: Gunakan millisecondsLeft
+            // MODIFIKASI: Gunakan centisecondsLeft & skor history default
             setData({
               ...initialDisplayData,
               ...parsedData,
               centisecondsLeft: parsedData.centisecondsLeft ?? 0,
+              scoreHistory1: parsedData.scoreHistory1 ?? [],
+              scoreHistory2: parsedData.scoreHistory2 ?? [],
             });
           } catch (error) {
             console.error(
@@ -228,14 +240,17 @@ export default function DisplayPage() {
 
     return (
       <div className="w-full px-1 sm:px-2 md:px-3">
-        <div className="flex flex-row justify-around items-end gap-x-1 sm:gap-x-1.5 md:gap-x-2 w-full py-1">
+        <div
+          className="grid w-full py-1 items-end justify-items-center gap-x-1 sm:gap-x-1.5 md:gap-x-2"
+          style={{ gridTemplateColumns: `repeat(${maxFouls}, minmax(0, 1fr))` }}
+        >
           {[...Array(maxFouls)].map((_, index) => {
             const isActive = index < foulCount;
             const label = getFoulIndicatorLabel(index);
             return (
               <div
                 key={`${playerKey}-foul-${index}`}
-                className="flex flex-col items-center gap-y-1 flex-grow min-w-0 px-0.5"
+                className="flex flex-col items-center gap-y-1 px-0.5 w-full"
               >
                 <div
                   className={`
@@ -253,7 +268,7 @@ export default function DisplayPage() {
                     text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold
                     transition-colors duration-150 ease-in-out mt-1 leading-none
                     ${isActive ? "text-yellow-300" : "text-gray-500"}
-                  `}
+                  text-center w-full`}
                 >
                   {label}
                 </span>
@@ -339,7 +354,7 @@ export default function DisplayPage() {
         {/* Kolom Tengah: Timer & Tatami */}
         {/* --- PERUBAHAN 2: Padding horizontal (px) dikecilkan agar kolom lebih ramping --- */}
         <div
-          className={`grid grid-rows-3 h-full p-4 px-4 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
+          className={`grid grid-rows-3 h-full p-2 px-2 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
             data.gameEnded ? "opacity-0" : "opacity-100"
           }`}
         >
@@ -525,6 +540,28 @@ export default function DisplayPage() {
                         </p>
                       </div>
                     )}
+                    {/* Riwayat Skor Pemain 1 */}
+                    {data.scoreHistory1 && data.scoreHistory1.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
+                          Riwayat Skor
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {data.scoreHistory1.map((chg, idx) => (
+                            <span
+                              key={`dp-p1-h-${idx}`}
+                              className={`px-2 py-0.5 rounded text-xs font-semibold border ${
+                                chg >= 0
+                                  ? "bg-green-700/50 border-green-500 text-green-200"
+                                  : "bg-red-700/50 border-red-500 text-red-200"
+                              }`}
+                            >
+                              {chg > 0 ? `+${chg}` : `${chg}`}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </section>
                 </div>
                 <div
@@ -577,6 +614,28 @@ export default function DisplayPage() {
                         <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-yellow-300">
                           {data.foul2}
                         </p>
+                      </div>
+                    )}
+                    {/* Riwayat Skor Pemain 2 */}
+                    {data.scoreHistory2 && data.scoreHistory2.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
+                          Riwayat Skor
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {data.scoreHistory2.map((chg, idx) => (
+                            <span
+                              key={`dp-p2-h-${idx}`}
+                              className={`px-2 py-0.5 rounded text-xs font-semibold border ${
+                                chg >= 0
+                                  ? "bg-green-700/50 border-green-500 text-green-200"
+                                  : "bg-red-700/50 border-red-500 text-red-200"
+                              }`}
+                            >
+                              {chg > 0 ? `+${chg}` : `${chg}`}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </section>

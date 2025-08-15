@@ -7,12 +7,16 @@ export interface ScoreboardData {
   score1: number;
   foul1: number;
   isFirstScorer1: boolean;
+  // Riwayat perubahan skor untuk pemain 1 (mis. [+1, +2, -1])
+  scoreHistory1?: number[];
 
   player2Name: string;
   player2From: string;
   score2: number;
   foul2: number;
   isFirstScorer2: boolean;
+  // Riwayat perubahan skor untuk pemain 2 (mis. [+1, +2, -1])
+  scoreHistory2?: number[];
 
   timeLeft: number;
   isRunning: boolean;

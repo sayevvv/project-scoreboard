@@ -50,6 +50,9 @@ export default function App() {
   // State untuk skor dan foul
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
+  // BARU: Riwayat perubahan skor per pemain
+  const [scoreHistory1, setScoreHistory1] = useState<number[]>([]);
+  const [scoreHistory2, setScoreHistory2] = useState<number[]>([]);
   const [foul1, setFoul1] = useState(0);
   const [foul2, setFoul2] = useState(0);
 
@@ -227,6 +230,8 @@ export default function App() {
 
       setScore1(0);
       setScore2(0);
+  setScoreHistory1([]);
+  setScoreHistory2([]);
       setFoul1(0);
       setFoul2(0);
       setGameEnded(false);
@@ -253,6 +258,12 @@ export default function App() {
   const updateScore = useCallback(
     (player: 1 | 2, points: number) => {
       if (!timerEverStarted || gameEnded) return;
+      // BARU: Catat perubahan ke riwayat skor
+      if (player === 1) {
+        setScoreHistory1((h) => [...h, points]);
+      } else {
+        setScoreHistory2((h) => [...h, points]);
+      }
       const scoreUpdater = (currentScore: number, pName: string) => {
         const newScore = Math.max(0, currentScore + points);
         if (newScore >= maxScore && maxScore > 0 && !gameEnded) {
@@ -376,11 +387,13 @@ export default function App() {
       score1,
       foul1,
       isFirstScorer1: firstScorer === 1,
+  scoreHistory1,
       player2Name: player2,
       player2From: playerFrom2,
       score2,
       foul2,
       isFirstScorer2: firstScorer === 2,
+  scoreHistory2,
       // Simpan timeLeft dan millisecondsLeft dari state yang diupdate UI
       timeLeft: Math.floor(currentTotalMsLeft / 1000),
       centisecondsLeft: Math.floor((currentTotalMsLeft % 1000) / 10),
@@ -412,10 +425,12 @@ export default function App() {
     player1,
     playerFrom1,
     score1,
+  scoreHistory1,
     foul1,
     player2,
     playerFrom2,
     score2,
+  scoreHistory2,
     foul2,
     firstScorer,
     timeLeft,
@@ -739,6 +754,28 @@ export default function App() {
                       </div>
                     )}
                   </section>
+                  {/* Riwayat Skor Pemain 1 */}
+                  {scoreHistory1.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
+                        Riwayat Skor
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {scoreHistory1.map((chg, idx) => (
+                          <span
+                            key={`p1-h-${idx}`}
+                            className={`px-2 py-0.5 rounded text-xs font-semibold border ${
+                              chg >= 0
+                                ? "bg-green-700/50 border-green-500 text-green-200"
+                                : "bg-red-700/50 border-red-500 text-red-200"
+                            }`}
+                          >
+                            {chg > 0 ? `+${chg}` : `${chg}`}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Kartu Pemain 2 */}
@@ -790,6 +827,28 @@ export default function App() {
                       </div>
                     )}
                   </section>
+                  {/* Riwayat Skor Pemain 2 */}
+                  {scoreHistory2.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
+                        Riwayat Skor
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {scoreHistory2.map((chg, idx) => (
+                          <span
+                            key={`p2-h-${idx}`}
+                            className={`px-2 py-0.5 rounded text-xs font-semibold border ${
+                              chg >= 0
+                                ? "bg-green-700/50 border-green-500 text-green-200"
+                                : "bg-red-700/50 border-red-500 text-red-200"
+                            }`}
+                          >
+                            {chg > 0 ? `+${chg}` : `${chg}`}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
@@ -843,7 +902,12 @@ export default function App() {
           score={score1}
           setScore={(ns) => {
             if (canModifyGame) {
-              setScore1(Math.max(0, ns));
+              const clamped = Math.max(0, ns);
+              setScore1((prev) => {
+                const delta = clamped - prev;
+                if (delta !== 0) setScoreHistory1((h) => [...h, delta]);
+                return clamped;
+              });
               if (ns >= maxScore && maxScore > 0)
                 endGame(player1, `Mencapai skor ${maxScore}`);
             }
@@ -926,7 +990,12 @@ export default function App() {
           score={score2}
           setScore={(ns) => {
             if (canModifyGame) {
-              setScore2(Math.max(0, ns));
+              const clamped = Math.max(0, ns);
+              setScore2((prev) => {
+                const delta = clamped - prev;
+                if (delta !== 0) setScoreHistory2((h) => [...h, delta]);
+                return clamped;
+              });
               if (ns >= maxScore && maxScore > 0)
                 endGame(player2, `Mencapai skor ${maxScore}`);
             }
