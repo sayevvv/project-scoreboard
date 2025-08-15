@@ -27,7 +27,7 @@ const formatTime = (seconds: number, centiseconds?: number): string => {
     .padStart(2, "0")}:${csString}`;
 };
 
-const SPLASH_VISIBLE_DURATION = 1500; // Durasi splash screen terlihat
+const SPLASH_VISIBLE_DURATION = 1000; // Durasi splash screen terlihat (1 detik)
 const FADE_DURATION = 800; // Durasi fade out splash screen
 const TIMER_UI_UPDATE_INTERVAL_MS = 50;
 
@@ -41,11 +41,11 @@ export default function App() {
   // State untuk pengaturan game
   const [maxScore, setMaxScore] = useState(50);
   const [maxFoul, setMaxFoul] = useState(5);
-  const [player1, setPlayer1] = useState("Pemain 1");
-  const [player2, setPlayer2] = useState("Pemain 2");
+  const [player1, setPlayer1] = useState("AO");
+  const [player2, setPlayer2] = useState("AKA");
   const [playerFrom1, setPlayerFrom1] = useState("");
   const [playerFrom2, setPlayerFrom2] = useState("");
-  const [initialDuration, setInitialDuration] = useState(1200); // Durasi awal dalam detik (20 menit)
+  const [initialDuration, setInitialDuration] = useState(60); // Durasi awal dalam detik (1 menit)
 
   // State untuk skor dan foul
   const [score1, setScore1] = useState(0);
@@ -216,8 +216,8 @@ export default function App() {
       matchLabel: string;
     }) => {
       const newDurationSeconds = time * 60;
-      setPlayer1(name1 || "Pemain 1");
-      setPlayer2(name2 || "Pemain 2");
+      setPlayer1(name1 || "AO");
+      setPlayer2(name2 || "AKA");
       setPlayerFrom1(from1 || "");
       setPlayerFrom2(from2 || "");
       setMaxScore(score);
@@ -660,7 +660,7 @@ export default function App() {
   const canModifyGame = timerEverStarted && !gameEnded;
 
   return (
-    <div className="mt-10 max-h-screen bg-black flex items-start py-3 text-white overflow-hidde scroll-m-0">
+    <div className="min-h-screen h-screen max-h-screen bg-black text-white overflow-hidden">
       {/* ... (Winner Modal, End Confirmation Modal - tidak ada perubahan signifikan) ... */}
       {gameEnded && (
         <div className="montserrat fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 sm:p-6 md:p-8">
@@ -705,7 +705,7 @@ export default function App() {
               <section className="mt-4 mb-4 grid flex-grow grid-cols-1 gap-4 md:mt-6 md:mb-6 md:grid-cols-2">
                 {/* Kartu Pemain 1 */}
                 <div
-                  className={`relative flex flex-col justify-between rounded-lg border bg-gradient-to-br from-red-600 to-black p-4 text-start sm:p-5 md:p-6 ${
+                  className={`relative flex flex-col justify-between rounded-lg border bg-gradient-to-br from-blue-600 to-black p-4 text-start sm:p-5 md:p-6 ${
                     winner === player1
                       ? "border-green-400 shadow-[0_0_40px_-10px_#22c55e]"
                       : "border-gray-600"
@@ -780,7 +780,7 @@ export default function App() {
 
                 {/* Kartu Pemain 2 */}
                 <div
-                  className={`relative flex flex-col justify-between rounded-lg border bg-gradient-to-bl from-blue-600 to-black p-4 text-start sm:p-5 md:p-6 ${
+                  className={`relative flex flex-col justify-between rounded-lg border bg-gradient-to-bl from-red-600 to-black p-4 text-start sm:p-5 md:p-6 ${
                     winner === player2
                       ? "border-green-400 shadow-[0_0_40px_-10px_#22c55e]"
                       : "border-gray-600"
@@ -893,10 +893,13 @@ export default function App() {
         </div>
       )}
 
-      <div className="fixed flex flex-col md:flex-row justify-around items-start w-full h-full max-h-screen gap-6 md:gap-10">
+      <div className="relative w-full h-full px-2 sm:px-3 md:px-4 pb-4">
         {!gameEnded && <FloatingButton />}
         {!gameEnded && <FullscreenToggleButton />}
-        <PlayerCard
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(320px,420px)_1fr] gap-4 md:gap-6 items-stretch w-full h-full max-h-full">
+          {/* Kolom Pemain 1 */}
+          <div className="flex min-h-0">
+            <PlayerCard
           name={player1}
           from={playerFrom1}
           score={score1}
@@ -921,70 +924,88 @@ export default function App() {
           addFoul={(c) => updateFouls(1, c)}
           maxFoul={maxFoul}
           disabled={!canModifyGame}
-          gradient="from-black via-red-600 to-black border-red-800/50"
-          gradient2="from-red-600 to-black"
+                gradient="from-black via-blue-600 to-black border-blue-800/50"
+                gradient2="from-blue-600 to-black"
           isFirstScorer={firstScorer === 1}
           showControls={showControls1}
           setShowControls={setShowControls1}
           playerIdentifier={1}
           onSetFirstScorerManually={handleSetFirstScorerManually}
-        />
-
-        <div className="flex flex-col items-center justify-center h-full gap-6">
-          <Timer
-            timeLeft={timeLeft}
-            centisecondsLeft={centisecondsLeft}
-            isRunning={isRunning}
-            initialDuration={initialDuration}
-            setTimeLeft={setTimeLeft}
-            setIsRunning={setIsRunning}
-            disabled={gameEnded}
-            onNewGame={handleNewGameFromTimerOrButton}
-            onTimerFirstStart={handleTimerFirstStart}
-            onChangeTime={handleChangeTime}
-            onAdjustTime={adjustTimeBySeconds}
-            formatTime={formatTime}
-          />
-          <button
-            onClick={() => setShowEndConfirmation(true)}
-            className="mb-2 mt-2 px-4 py-2 rounded-full font-semibold text-white transition text-sm bg-red-600 hover:bg-red-500 disabled:bg-red-200 disabled:opacity-70 disabled:cursor-not-allowed"
-            disabled={gameEnded || !timerEverStarted}
-          >
-            Selesaikan Game
-          </button>
-          <div className="flex flex-col gap-2 rounded-2xl border border-slate-500 p-2">
-            <small className="text-[10px] text-slate-400 text-center">
-              Kontrol Tampilan Ekstra
-            </small>
-            {!gameEnded && (
-              <button
-                onClick={handleOpenDisplayWindow}
-                // --- PERUBAHAN 1.A: Penyesuaian Style Disabled ---
-                className="px-4 py-2 rounded-xl font-semibold text-white transition text-sm bg-sky-600 hover:bg-sky-500 disabled:bg-sky-900 disabled:text-sky-400/70 disabled:opacity-70 disabled:cursor-not-allowed"
-                title="Buka Jendela Tampilan Terpisah (OBS)"
-                // --- PERUBAHAN 1.B: Menambahkan atribut 'disabled' ---
-                disabled={isRunning}
-              >
-                Layar Display
-              </button>
-            )}
-
-            {!gameEnded && (
-              <button
-                onClick={handleToggleFullscreenDisplayIPC}
-                // --- PERUBAHAN 2.A: Penyesuaian Style Disabled ---
-                className="px-4 py-2 rounded-xl font-semibold text-white transition text-sm bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 disabled:text-emerald-400/70 disabled:opacity-70 disabled:cursor-not-allowed"
-                title="Toggle Fullscreen pada Jendela Tampilan"
-                // --- PERUBAHAN 2.B: Menambahkan atribut 'disabled' ---
-                disabled={isRunning}
-              >
-                Fullscreen Display
-              </button>
-            )}
+          alwaysShowControls
+            />
           </div>
-        </div>
 
-        <PlayerCard
+          {/* Kolom Tengah: 3 kelompok (atas: tatami/match, tengah: timer, bawah: actions) */}
+          <div className="grid grid-rows-[auto_1fr_auto] items-stretch h-full gap-3 md:gap-4 overflow-hidden bg-gray-900/70 border border-gray-700 rounded-2xl p-3">
+            {/* Atas: Tatami, Nomor, Match Type */}
+            <div className="flex flex-col items-center justify-center text-center gap-1 mt-1">
+              <div className="text-2xl md:text-3xl font-bold text-gray-300 tracking-widest montserrat-bold">
+                {tatamiLabel || "TATAMI"}
+              </div>
+              <div className="karantina-regular text-6xl md:text-7xl lg:text-8xl text-white leading-none">
+                {tatamiNumber || "1"}
+              </div>
+              {matchLabel && (
+                <div className="montserrat font-bold text-base md:text-lg lg:text-xl text-yellow-400 tracking-widest mt-1 uppercase">
+                  {matchLabel}
+                </div>
+              )}
+            </div>
+
+            {/* Tengah: Timer & tombol timer */}
+            <div className="flex items-center justify-center">
+              <Timer
+                timeLeft={timeLeft}
+                centisecondsLeft={centisecondsLeft}
+                isRunning={isRunning}
+                initialDuration={initialDuration}
+                setTimeLeft={setTimeLeft}
+                setIsRunning={setIsRunning}
+                disabled={gameEnded}
+                onNewGame={handleNewGameFromTimerOrButton}
+                onTimerFirstStart={handleTimerFirstStart}
+                onChangeTime={handleChangeTime}
+                onAdjustTime={adjustTimeBySeconds}
+                formatTime={formatTime}
+              />
+            </div>
+
+            {/* Bawah: Selesaikan Game & Display toggles */}
+            <div className="flex flex-col gap-2 rounded-xl border border-slate-500 p-2">
+              <button
+                onClick={() => setShowEndConfirmation(true)}
+                className="px-4 py-2 rounded-xl font-semibold text-white transition text-sm bg-red-600 hover:bg-red-500 disabled:bg-red-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                disabled={gameEnded || !timerEverStarted}
+              >
+                Selesaikan Game
+              </button>
+              <small className="text-[10px] text-slate-400 text-center">Kontrol Tampilan</small>
+              {!gameEnded && (
+                <button
+                  onClick={handleOpenDisplayWindow}
+                  className="px-4 py-2 rounded-xl font-semibold text-white transition text-sm bg-sky-600 hover:bg-sky-500 disabled:bg-sky-900 disabled:text-sky-400/70 disabled:opacity-70 disabled:cursor-not-allowed"
+                  title="Buka Jendela Tampilan Terpisah (OBS)"
+                  disabled={isRunning}
+                >
+                  Layar Display
+                </button>
+              )}
+              {!gameEnded && (
+                <button
+                  onClick={handleToggleFullscreenDisplayIPC}
+                  className="px-4 py-2 rounded-xl font-semibold text-white transition text-sm bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 disabled:text-emerald-400/70 disabled:opacity-70 disabled:cursor-not-allowed"
+                  title="Toggle Fullscreen pada Jendela Tampilan"
+                  disabled={isRunning}
+                >
+                  Fullscreen Display
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Kolom Pemain 2 */}
+          <div className="flex min-h-0">
+            <PlayerCard
           name={player2}
           from={playerFrom2}
           score={score2}
@@ -1009,14 +1030,17 @@ export default function App() {
           addFoul={(c) => updateFouls(2, c)}
           maxFoul={maxFoul}
           disabled={!canModifyGame}
-          gradient="from-black via-blue-600 to-black border-blue-800/50"
-          gradient2="from-blue-600 to-black"
+                gradient="from-black via-red-600 to-black border-red-800/50"
+                gradient2="from-red-600 to-black"
           isFirstScorer={firstScorer === 2}
           showControls={showControls2}
           setShowControls={setShowControls2}
           playerIdentifier={2}
           onSetFirstScorerManually={handleSetFirstScorerManually}
-        />
+              alwaysShowControls
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
