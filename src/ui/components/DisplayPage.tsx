@@ -303,16 +303,16 @@ export default function DisplayPage() {
           <div className={`h-[60%] w-full bg-gradient-to-b ${colorBlock} flex items-center justify-center text-center px-4 sm:px-8 pt-6 pb-4`}>
             <div className="w-full">
               <h1
-                className="montserrat-bold text-white leading-tight"
-                style={{ fontSize: "clamp(2.25rem, 6vw, 6rem)" }}
+                className="montserrat-semibold text-white leading-tight"
+                style={{ fontSize: "clamp(2.5rem, 10vw, 7rem)" }}
                 title={winnerName}
               >
                 {winnerName?.toUpperCase()}
               </h1>
               {winnerFrom && (
                 <p
-                  className="montserrat-bold text-white/95 mt-2"
-                  style={{ fontSize: "clamp(1.25rem, 4vw, 3rem)" }}
+                  className="montserrat-semibold text-white/95 mt-2"
+                  style={{ fontSize: "clamp(2.5rem, 10vw, 7rem)" }}
                   title={winnerFrom}
                 >
                   {winnerFrom.toUpperCase()}
@@ -326,7 +326,7 @@ export default function DisplayPage() {
             <div className="text-center">
               <div
                 className="montserrat-extrabold text-white tracking-wider"
-                style={{ fontSize: "clamp(2.5rem, 10vw, 7rem)" }}
+                style={{ fontSize: "clamp(3rem, 12vw, 10rem)" }}
               >
                 WINNER
               </div>

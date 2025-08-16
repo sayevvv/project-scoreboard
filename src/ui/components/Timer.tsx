@@ -128,7 +128,7 @@ export default function Timer({
         <>
             {/* --- PERBAIKAN: Mengembalikan JSX Modal yang Hilang --- */}
             {showResetConfirmation && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm md:backdrop-blur p-4">
                     <div className="w-full max-w-md rounded-xl border border-gray-700 bg-gray-900 p-6 text-center shadow-2xl">
                         <h3 className="text-xl font-bold text-yellow-400 mb-4">Konfirmasi Reset Timer</h3>
                         <p className="text-white mb-6">Apakah Anda yakin ingin mengatur ulang waktu ke durasi awal ({formatTime(initialDuration)})?</p>
@@ -140,7 +140,7 @@ export default function Timer({
                 </div>
             )}
             {showNewGameConfirmation && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm md:backdrop-blur p-4">
                     <div className="w-full max-w-md rounded-xl border border-gray-700 bg-gray-900 p-6 text-center shadow-2xl">
                         <h3 className="text-xl font-bold text-blue-400 mb-4">Konfirmasi Game Baru</h3>
                         <p className="text-white mb-6">Apakah Anda yakin ingin memulai game baru? Semua data game saat ini akan hilang.</p>
@@ -152,7 +152,7 @@ export default function Timer({
                 </div>
             )}
             {showChangeTimeModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm md:backdrop-blur p-4">
                     <div className="w-full max-w-md rounded-xl border border-gray-700 bg-gray-900 p-6 text-center shadow-2xl">
                         <h3 className="text-xl font-bold text-teal-400 mb-4">Ubah Waktu Permainan</h3>
                         <p className="text-white mb-3">Masukkan waktu baru (Menit : Detik):</p>

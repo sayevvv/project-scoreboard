@@ -41,6 +41,11 @@
   font-weight: 600;
 }
 
+.montserrat-semibold {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
 .montserrat-extrabold {
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
