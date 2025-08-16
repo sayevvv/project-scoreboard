@@ -27,7 +27,7 @@ const formatTime = (seconds: number, centiseconds?: number): string => {
     .padStart(2, "0")}:${csString}`;
 };
 
-const SPLASH_VISIBLE_DURATION = 1000; // Durasi splash screen terlihat (1 detik)
+const SPLASH_VISIBLE_DURATION = 1500; // Durasi splash screen terlihat (1.5 detik)
 const FADE_DURATION = 800; // Durasi fade out splash screen
 const TIMER_UI_UPDATE_INTERVAL_MS = 50;
 
@@ -654,6 +654,35 @@ export default function App() {
     setShowSetup(true);
   }, []);
 
+  // Rematch: reset skor/timer/foul/histories & flags, keep settings and players
+  const handleRematch = useCallback(() => {
+    // Stop timer and reset flags
+    setIsRunning(false);
+    setTimerEverStarted(false);
+    // Reset time to full duration
+    setTimeLeft(initialDuration);
+    setCentisecondsLeft(0);
+    setElapsedTime(0);
+    // Reset internal refs so next start counts down properly
+    pausedTimeLeftRef.current = initialDuration * 1000;
+    targetEndTimeRef.current = null;
+    stopwatchStartTimeRef.current = null;
+    // Clear winner/first scorer and scores/fouls/histories
+    setWinner(null);
+    setEndReason("");
+    setFirstScorer(null);
+    setScore1(0);
+    setScore2(0);
+    setFoul1(0);
+    setFoul2(0);
+    setScoreHistory1([]);
+    setScoreHistory2([]);
+    // Resume normal play
+    setGameEnded(false);
+  }, [initialDuration]);
+
+  // Full result overlay removed per request
+
   if (isSplashVisible) return <SplashScreen isFading={isSplashFading} />;
   if (showSetup) return <SetupModal onSubmit={handleSetupSubmit} />;
 
@@ -666,6 +695,27 @@ export default function App() {
         <div className="montserrat fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 sm:p-6 md:p-8">
           {/* Kontainer modal dengan overflow-y-auto untuk scrolling di layar kecil */}
           <div className="flex h-full w-full flex-col rounded-xl border border-gray-700 bg-gray-900 p-4 shadow-2xl sm:p-6 overflow-y-auto">
+            {/* Navbar aksi */}
+            <div className="flex items-center justify-between gap-2 border-b border-gray-700 pb-3 mb-3">
+              <div className="text-sm text-gray-400 uppercase tracking-widest">Hasil Pertandingan</div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleNewGameFromTimerOrButton}
+                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white border border-sky-700"
+                  title="Mulai permainan baru (ubah pengaturan)"
+                >
+                  Main
+                </button>
+                <button
+                  onClick={handleRematch}
+                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-700"
+                  title="Rematch dengan pengaturan yang sama"
+                >
+                  Rematch
+                </button>
+                {/* Tampilkan Hasil Lengkap removed */}
+              </div>
+            </div>
             {/* Bagian Atas: Status Kemenangan & Durasi */}
             <div className="flex-grow flex flex-col">
               <div className="flex flex-col gap-y-2 rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-center text-white sm:py-4">
@@ -754,21 +804,27 @@ export default function App() {
                       </div>
                     )}
                   </section>
-                  {/* Riwayat Skor Pemain 1 */}
+          {/* Riwayat Skor Pemain 1 (lebih besar saat seri) */}
                   {scoreHistory1.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
-                        Riwayat Skor
+                    <div className={`mt-3 ${!winner ? "mt-4" : ""}`}>
+                      <p
+                        className={`text-gray-100/90 montserrat-medium mb-1 ${
+                          !winner
+                            ? "text-base sm:text-lg md:text-xl"
+                            : "text-sm sm:text-base"
+                        }`}
+                      >
+            Riwayat Skor
                       </p>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className={`flex flex-wrap ${!winner ? "gap-2 sm:gap-3" : "gap-1.5"}`}>
                         {scoreHistory1.map((chg, idx) => (
                           <span
                             key={`p1-h-${idx}`}
-                            className={`px-2 py-0.5 rounded text-xs font-semibold border ${
-                              chg >= 0
-                                ? "bg-green-700/50 border-green-500 text-green-200"
-                                : "bg-red-700/50 border-red-500 text-red-200"
-                            }`}
+                            className={`${
+                              !winner
+                ? "px-3 py-1 rounded text-base sm:text-lg font-semibold"
+                : "px-2 py-0.5 rounded text-xs font-semibold"
+              } border bg-emerald-600/80 border-emerald-400 text-white`}
                           >
                             {chg > 0 ? `+${chg}` : `${chg}`}
                           </span>
@@ -827,21 +883,27 @@ export default function App() {
                       </div>
                     )}
                   </section>
-                  {/* Riwayat Skor Pemain 2 */}
+          {/* Riwayat Skor Pemain 2 (lebih besar saat seri) */}
                   {scoreHistory2.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
-                        Riwayat Skor
+                    <div className={`mt-3 ${!winner ? "mt-4" : ""}`}>
+                      <p
+                        className={`text-gray-100/90 montserrat-medium mb-1 ${
+                          !winner
+                            ? "text-base sm:text-lg md:text-xl"
+                            : "text-sm sm:text-base"
+                        }`}
+                      >
+            Riwayat Skor
                       </p>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className={`flex flex-wrap ${!winner ? "gap-2 sm:gap-3" : "gap-1.5"}`}>
                         {scoreHistory2.map((chg, idx) => (
                           <span
                             key={`p2-h-${idx}`}
-                            className={`px-2 py-0.5 rounded text-xs font-semibold border ${
-                              chg >= 0
-                                ? "bg-green-700/50 border-green-500 text-green-200"
-                                : "bg-red-700/50 border-red-500 text-red-200"
-                            }`}
+                            className={`${
+                              !winner
+                ? "px-3 py-1 rounded text-base sm:text-lg font-semibold"
+                : "px-2 py-0.5 rounded text-xs font-semibold"
+              } border bg-emerald-600/80 border-emerald-400 text-white`}
                           >
                             {chg > 0 ? `+${chg}` : `${chg}`}
                           </span>
@@ -853,19 +915,11 @@ export default function App() {
               </section>
             </div>
 
-            {/* Bagian Bawah: Tombol Aksi */}
-            {/* Layout tombol sudah cukup responsif, hanya perbaikan kecil pada spacing */}
-            <div className="flex flex-shrink-0 flex-col items-center justify-center gap-3 border-t border-gray-700 pt-4 sm:flex-row">
-              <button
-                onClick={handleNewGameFromTimerOrButton}
-                className="w-full rounded-lg border border-blue-600 px-6 py-2 text-base text-blue-300 transition hover:bg-blue-900 hover:text-white sm:w-auto md:text-lg"
-              >
-                Main Lagi
-              </button>
-            </div>
+            {/* Bagian Bawah dihapus: aksi dipindah ke navbar */}
           </div>
         </div>
       )}
+  {/* Full result overlay removed */}
       {showEndConfirmation && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 p-6 rounded-xl text-center max-w-md w-full shadow-2xl border border-gray-700">
@@ -924,8 +978,8 @@ export default function App() {
           addFoul={(c) => updateFouls(1, c)}
           maxFoul={maxFoul}
           disabled={!canModifyGame}
-                gradient="from-black via-blue-600 to-black border-blue-800/50"
-                gradient2="from-blue-600 to-black"
+                gradient="from-black via-blue-700 to-black border-blue-800/60"
+                gradient2="from-blue-600 to-blue-800"
           isFirstScorer={firstScorer === 1}
           showControls={showControls1}
           setShowControls={setShowControls1}
@@ -1030,8 +1084,8 @@ export default function App() {
           addFoul={(c) => updateFouls(2, c)}
           maxFoul={maxFoul}
           disabled={!canModifyGame}
-                gradient="from-black via-red-600 to-black border-red-800/50"
-                gradient2="from-red-600 to-black"
+                gradient="from-black via-red-700 to-black border-red-800/60"
+                gradient2="from-red-600 to-red-800"
           isFirstScorer={firstScorer === 2}
           showControls={showControls2}
           setShowControls={setShowControls2}

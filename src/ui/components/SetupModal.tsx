@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FullscreenToggleButton from "./FullScreenToggleButton";
 
 type Props = {
@@ -35,6 +35,13 @@ export default function SetupModal({ onSubmit }: Props) {
   const [matchLabel, setMatchLabel] = useState("SEMI FINAL");
   const [isMatchSettingsOpen, setIsMatchSettingsOpen] = useState(false);
 
+  // Mount animation state
+  const [enter, setEnter] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEnter(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   const handleSubmit = () => {
     onSubmit({
       name1: name1.slice(0, MAX_LENGTH_NAME),
@@ -52,10 +59,16 @@ export default function SetupModal({ onSubmit }: Props) {
 
   return (
     <>
-      <div className="montserrat fixed inset-0 z-50 bg-black/60 p-4 overflow-y-auto flex flex-col items-center gap-5 pt-10 pb-20">
+      <div
+        className={`montserrat fixed inset-0 z-50 p-4 overflow-y-auto flex flex-col items-center gap-5 pt-10 pb-20 transition-opacity duration-500 ease-out ${
+          enter ? "bg-black/60 opacity-100" : "bg-black/0 opacity-0"
+        }`}
+      >
         <FullscreenToggleButton />
         <header>
-          <h2 className="karantina-bold text-5xl md:text-6xl font-bold mb-3 text-center text-white">
+          <h2
+            className={`karantina-bold text-5xl md:text-6xl font-bold mb-3 text-center text-white transition-transform duration-500 ease-out ${enter ? "translate-y-0" : "-translate-y-1"}`}
+          >
             Setup Pertandingan
           </h2>
           <p className="text-sm text-gray-400 text-center mb-4">
@@ -63,7 +76,12 @@ export default function SetupModal({ onSubmit }: Props) {
           </p>
         </header>
 
-        <div className="bg-gray-950 rounded-xl p-6 md:p-8 w-full shadow-lg max-w-5xl border-white border-1 text-white">
+        <div
+          className={`bg-gray-950 rounded-xl p-6 md:p-8 w-full shadow-lg max-w-5xl border-white border-1 text-white transition-all duration-500 ease-out ${
+            enter ? "opacity-100 scale-100 translate-y-0 blur-0" : "opacity-0 scale-95 translate-y-1 blur-[2px]"
+          }`}
+          style={{ transitionDelay: enter ? "80ms" : "0ms" }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* LEFT COLUMN */}
             <div className="flex flex-col gap-6">

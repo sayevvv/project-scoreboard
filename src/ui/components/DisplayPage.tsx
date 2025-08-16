@@ -46,7 +46,6 @@ const FOUL_LABELS: string[] = ["C1", "C2", "C3", "HC", "H"];
 const EXTRA_FOUL_LABEL: string = "X";
 
 // Ambil API dari window jika tersedia (diekspos oleh preload.ts)
-// @ts-ignore (Jika Anda belum membuat deklarasi tipe global untuk window.electronAPI di file .d.ts yang tercakup oleh DisplayPage)
 const electronAPI = window.electronAPI;
 
 export default function DisplayPage() {
@@ -288,6 +287,59 @@ export default function DisplayPage() {
   const mainTimeDisplay = `${timeParts[0]}:${timeParts[1]}`;
   const centisecondsDisplay = timeParts[2];
 
+  // Tampilan pemenang layar penuh (satu pemain saja) saat game berakhir
+  if (data.gameEnded && data.winner) {
+    const isWinner1 = data.winner === data.player1Name;
+    const winnerName = isWinner1 ? data.player1Name : data.player2Name;
+    const winnerFrom = isWinner1 ? data.player1From : data.player2From;
+    const colorBlock = isWinner1
+      ? "from-blue-600 to-blue-800"
+      : "from-red-600 to-red-800";
+
+    return (
+      <div className="h-screen w-screen bg-black flex items-center justify-center p-2 sm:p-4">
+        <div className="relative w-full h-full max-w-[1600px] max-h-[900px] mx-auto rounded-2xl border border-emerald-400/80 shadow-[0_0_32px_4px_rgba(16,185,129,0.55)] overflow-hidden">
+          {/* Bagian atas berwarna (nama & asal) */}
+          <div className={`h-[60%] w-full bg-gradient-to-b ${colorBlock} flex items-center justify-center text-center px-4 sm:px-8 pt-6 pb-4`}>
+            <div className="w-full">
+              <h1
+                className="montserrat-bold text-white leading-tight"
+                style={{ fontSize: "clamp(2.25rem, 6vw, 6rem)" }}
+                title={winnerName}
+              >
+                {winnerName?.toUpperCase()}
+              </h1>
+              {winnerFrom && (
+                <p
+                  className="montserrat-bold text-white/95 mt-2"
+                  style={{ fontSize: "clamp(1.25rem, 4vw, 3rem)" }}
+                  title={winnerFrom}
+                >
+                  {winnerFrom.toUpperCase()}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Bagian bawah gelap (WINNER) */}
+          <div className="h-[40%] w-full bg-[#111827] flex items-center justify-center">
+            <div className="text-center">
+              <div
+                className="montserrat-extrabold text-white tracking-wider"
+                style={{ fontSize: "clamp(2.5rem, 10vw, 7rem)" }}
+              >
+                WINNER
+              </div>
+            </div>
+          </div>
+
+          {/* Glow border subtle overlay */}
+          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-emerald-400/30" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen bg-black text-white flex flex-col montserrat-regular select-none p-1 md:p-2">
       <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-1 md:gap-2 flex-grow min-h-0">
@@ -450,197 +502,86 @@ export default function DisplayPage() {
         </div>
       </div>
 
-      {/* Overlay Hasil Game (Logika tidak berubah) */}
-      {data.gameEnded && (
-        <div className="montserrat fixed inset-0 bg-black/90 backdrop-blur-sm flex z-50 p-4 sm:p-6 md:p-8 items-center justify-center">
-          <div className="bg-gray-900/95 w-full h-full max-w-none max-h-none p-4 sm:p-5 rounded-xl border-2 border-gray-700/80 flex flex-col shadow-2xl shadow-black/50 overflow-y-auto">
-            <div className="flex-grow flex flex-col">
-              <div className="bg-gray-800/90 border border-gray-700 text-center px-3 py-4 sm:px-4 sm:py-5 rounded-lg text-white flex flex-col gap-y-1.5 sm:gap-y-2 mb-4 sm:mb-5">
-                {data.winner ? (
-                  <>
-                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-7xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
-                      {data.winner.toUpperCase()} WIN
-                    </p>
-                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
-                      {data.endReason}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
-                      HASIL SERI!
-                    </p>
-                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
-                      {data.endReason}
-                    </p>
-                  </>
-                )}
-                <p className="text-base sm:text-lg md:text-xl mt-2 sm:mt-3 text-gray-300 montserrat-semibold font-semibold">
-                  Durasi Permainan:{" "}
-                  {formatDisplayTime(
-                    Math.floor(data.elapsedTime),
-                    Math.round(
-                      ((data.elapsedTime - Math.floor(data.elapsedTime)) *
-                        1000) /
-                        10
-                    )
-                  )}
-                </p>
+      {/* Overlay Hasil Seri (Tie) - Desain Hantei */}
+      {data.gameEnded && !data.winner && (
+        <div className="fixed inset-0 z-50 bg-black text-white p-3 sm:p-4 md:p-6 lg:p-8">
+          {/* Perkecil kartu, perluas panel atas lebih lebar */}
+          <div className="h-full w-full grid grid-rows-[0.85fr_1fr] gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+            {/* Panel Keputusan Juri (top) */}
+            <div className="w-full h-full rounded-3xl border border-gray-500/40 ring-1 ring-white/5 bg-[#1f2431] flex flex-col items-center justify-center text-center shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]">
+              <div className="montserrat-extrabold tracking-wide" style={{fontSize: 'clamp(1.5rem, 3.6vw, 3.6rem)'}}>
+                KEPUTUSAN JURI
               </div>
-              <section className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3 text-start flex-grow">
-                <div
-                  className={`bg-gradient-to-br from-red-500 to-black/85 p-3 sm:p-4 rounded-lg border-2 ${
-                    data.winner === data.player1Name
-                      ? "border-green-400 shadow-[0_0_30px_-10px_#22c55e]"
-                      : "border-gray-600/70"
-                  } relative flex flex-col justify-between items-start py-4 sm:py-5 px-4 sm:px-6`}
-                >
-                  <header>
-                    <h3
-                      className="sm:text-3xl lg:text-4xl xl:text-5xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
-                      title={data.player1Name}
-                    >
-                      {data.player1Name.toUpperCase()}
-                    </h3>
+              <div className="karantina-bold leading-none mt-2" style={{fontSize: 'clamp(2.6rem, 8vw, 8rem)'}}>
+                HANTEI
+              </div>
+            </div>
+
+            {/* Kartu Pemain (bottom) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:gap-8 h-full">
+              {/* Pemain 1 (Blue) */}
+              <div className="relative h-full rounded-3xl border border-blue-300/50 ring-1 ring-blue-200/10 bg-gradient-to-br from-blue-700 to-blue-900 text-white p-3 sm:p-4 md:p-5 flex flex-col shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="w-full">
+                    <div className="montserrat-bold w-full truncate text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold">
+                      {data.player1Name?.toUpperCase()}
+                    </div>
                     {data.player1From && (
-                      <h4
-                        className="sm:text-xl lg:text-2xl xl:text-3xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
-                        title={data.player1From.toUpperCase()}
-                      >
+                      <div className="montserrat-semibold w-full truncate text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white/95">
                         {data.player1From.toUpperCase()}
-                      </h4>
-                    )}
-                  </header>
-                  {data.isFirstScorer1 && (
-                    <div
-                      className="absolute top-1.5 right-1.5 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-500/90 rounded-md shadow-lg border-2 border-green-300/90 z-10 text-white flex items-center justify-center p-1"
-                      title="Pencetak Skor Pertama"
-                    >
-                      <span className="text-2xl sm:text-3xl md:text-4xl font-black">
-                        S
-                      </span>
-                    </div>
-                  )}
-                  <section className="flex flex-col gap-1.5 sm:gap-2 w-full text-2xl sm:text-3xl md:text-4xl mt-2 sm:mt-3">
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-gray-100/90 montserrat-medium">
-                        SKOR :
-                      </p>
-                      <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-white">
-                        {data.score1}
-                      </p>
-                    </div>
-                    {data.maxFoul > 0 && (
-                      <div className="flex w-full justify-between items-center">
-                        <p className="text-gray-100/90 montserrat-medium">
-                          FOUL :
-                        </p>
-                        <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-yellow-300">
-                          {data.foul1}
-                        </p>
                       </div>
                     )}
-                    {/* Riwayat Skor Pemain 1 */}
-                    {data.scoreHistory1 && data.scoreHistory1.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
-                          Riwayat Skor
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {data.scoreHistory1.map((chg, idx) => (
-                            <span
-                              key={`dp-p1-h-${idx}`}
-                              className={`px-2 py-0.5 rounded text-xs font-semibold border ${
-                                chg >= 0
-                                  ? "bg-green-700/50 border-green-500 text-green-200"
-                                  : "bg-red-700/50 border-red-500 text-red-200"
-                              }`}
-                            >
-                              {chg > 0 ? `+${chg}` : `${chg}`}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </section>
+                  </div>
+                  <div className="karantina-regular leading-none" style={{fontSize: 'clamp(2.2rem, 6.5vw, 4.5rem)'}}>
+                    {data.score1}
+                  </div>
                 </div>
-                <div
-                  className={`bg-gradient-to-bl from-blue-500 to-black/85 p-3 sm:p-4 rounded-lg border-2 ${
-                    data.winner === data.player2Name
-                      ? "border-green-400 shadow-[0_0_30px_-10px_#22c55e]"
-                      : "border-gray-600/70"
-                  } relative flex flex-col justify-between items-start py-4 sm:py-5 px-4 sm:px-6`}
-                >
-                  <header>
-                    <h3
-                      className="sm:text-3xl lg:text-4xl xl:text-5xl montserrat-bold font-bold w-full text-start mb-1 sm:mb-1.5"
-                      title={data.player2Name}
-                    >
-                      {data.player2Name.toUpperCase()}
-                    </h3>
+                {/* Riwayat Skor */}
+                {data.scoreHistory1 && data.scoreHistory1.length > 0 && (
+                  <div className="mt-auto pt-3">
+                    <div className="text-xl sm:text-2xl md:text-3xl text-white font-semibold mb-2">Riwayat Skor</div>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 text-white/95">
+                      {data.scoreHistory1.map((chg, idx) => (
+                        <span key={`tie-p1-${idx}`} className="montserrat-semibold px-2.5 py-0.5 rounded border bg-emerald-600/80 border-emerald-400 text-white" style={{fontSize: 'clamp(0.95rem, 2vw, 1.6rem)'}}>
+                          {chg > 0 ? `+${chg}` : `${chg}`}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Pemain 2 (Red) */}
+              <div className="relative h-full rounded-3xl border border-red-300/50 ring-1 ring-red-200/10 bg-gradient-to-br from-red-700 to-red-900 text-white p-3 sm:p-4 md:p-5 flex flex-col shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="w-full">
+                    <div className="montserrat-bold w-full truncate text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold">
+                      {data.player2Name?.toUpperCase()}
+                    </div>
                     {data.player2From && (
-                      <h4
-                        className="sm:text-xl lg:text-2xl xl:text-3xl montserrat-bold font-bold w-full text-start mb-1.5 sm:mb-2 text-gray-100/95"
-                        title={data.player2From.toUpperCase()}
-                      >
+                      <div className="montserrat-semibold w-full truncate text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white/95">
                         {data.player2From.toUpperCase()}
-                      </h4>
-                    )}
-                  </header>
-                  {data.isFirstScorer2 && (
-                    <div
-                      className="absolute top-1.5 right-1.5 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-500/90 rounded-md shadow-lg border-2 border-green-300/90 z-10 text-white flex items-center justify-center p-1"
-                      title="Pencetak Skor Pertama"
-                    >
-                      <span className="text-2xl sm:text-3xl md:text-4xl font-black">
-                        S
-                      </span>
-                    </div>
-                  )}
-                  <section className="flex flex-col gap-1.5 sm:gap-2 w-full text-2xl sm:text-3xl md:text-4xl mt-2 sm:mt-3">
-                    <div className="flex w-full justify-between items-center">
-                      <p className="text-gray-100/90 montserrat-medium">
-                        SKOR :
-                      </p>
-                      <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-white">
-                        {data.score2}
-                      </p>
-                    </div>
-                    {data.maxFoul > 0 && (
-                      <div className="flex w-full justify-between items-center">
-                        <p className="text-gray-100/90 montserrat-medium">
-                          FOUL :
-                        </p>
-                        <p className="karantina-regular text-4xl sm:text-5xl md:text-8xl text-yellow-300">
-                          {data.foul2}
-                        </p>
                       </div>
                     )}
-                    {/* Riwayat Skor Pemain 2 */}
-                    {data.scoreHistory2 && data.scoreHistory2.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-gray-100/80 montserrat-medium text-sm sm:text-base mb-1">
-                          Riwayat Skor
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {data.scoreHistory2.map((chg, idx) => (
-                            <span
-                              key={`dp-p2-h-${idx}`}
-                              className={`px-2 py-0.5 rounded text-xs font-semibold border ${
-                                chg >= 0
-                                  ? "bg-green-700/50 border-green-500 text-green-200"
-                                  : "bg-red-700/50 border-red-500 text-red-200"
-                              }`}
-                            >
-                              {chg > 0 ? `+${chg}` : `${chg}`}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </section>
+                  </div>
+                  <div className="karantina-regular leading-none" style={{fontSize: 'clamp(2.2rem, 6.5vw, 4.5rem)'}}>
+                    {data.score2}
+                  </div>
                 </div>
-              </section>
+                {/* Riwayat Skor */}
+                {data.scoreHistory2 && data.scoreHistory2.length > 0 && (
+                  <div className="mt-auto pt-3">
+                    <div className="text-xl sm:text-2xl md:text-3xl text-white font-semibold mb-2">Riwayat Skor</div>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 text-white/95">
+                      {data.scoreHistory2.map((chg, idx) => (
+                        <span key={`tie-p2-${idx}`} className="montserrat-semibold px-2.5 py-0.5 rounded border bg-emerald-600/80 border-emerald-400 text-white" style={{fontSize: 'clamp(0.95rem, 2vw, 1.6rem)'}}>
+                          {chg > 0 ? `+${chg}` : `${chg}`}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

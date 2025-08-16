@@ -15,9 +15,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ isFading }) => {
       <style>
         {`
           @keyframes shimmer {
-            0% { transform: translateX(-100%); opacity: 0.0; }
-            50% { opacity: 0.25; }
-            100% { transform: translateX(100%); opacity: 0.0; }
+            0% { transform: translateX(-60%); opacity: 0.0; }
+            40% { opacity: 0.22; }
+            100% { transform: translateX(160%); opacity: 0.0; }
           }
         `}
       </style>
@@ -43,17 +43,17 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ isFading }) => {
           </div>
         </div>
 
-        {/* One-time 1s shimmer sweep */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+    {/* One-time shimmer sweep across full width */}
+    <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none z-10">
           <div
-            className="h-full w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            style={{ animation: "shimmer 1s linear 1" }}
+            className="h-full w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+            style={{ animation: "shimmer 1.4s ease-out 1" }}
           />
         </div>
       </div>
 
-      {/* Tiny caption */}
-      <p className="mt-4 text-[10px] tracking-widest text-gray-300/80">AKAI DOJO SCOREBOARD</p>
+    {/* Caption */}
+    <p className="mt-4 text-[12px] sm:text-sm tracking-widest text-gray-200/85">AKAI DOJO SCOREBOARD</p>
     </div>
   );
 };

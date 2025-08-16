@@ -67,7 +67,7 @@ export default function PlayerCard({
             </div>
 
       <div
-        className={`relative flex flex-col items-center justify-center border-2  px-6 sm:px-12 ${scoreAreaPadding} rounded-lg shadow-lg bg-gradient-to-br ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full flex-grow min-h-0`}
+  className={`relative flex flex-col items-center justify-center border-2 px-6 sm:px-12 ${scoreAreaPadding} rounded-lg shadow-lg bg-gradient-to-br ${gradient} text-white transition-all duration-300 hover:shadow-xl w-full flex-grow min-h-0`}
       >
         {isFirstScorer && (
           <div
@@ -83,23 +83,27 @@ export default function PlayerCard({
       </div>
 
       {maxFoul > 0 && (
-        <div className="flex flex-col border rounded-md px-2 py-1 bg-[rgba(55,65,81,0.6)] gap-1 my-4 flex-shrink-0">
+        <div className="flex flex-col border rounded-md px-2 py-1 bg-[rgba(55,65,81,0.6)] gap-1 my-4 flex-shrink-0 w-full">
           {Array.from({ length: Math.ceil(maxFoul / 7) }).map((_, rowIndex) => {
             const start = rowIndex * 7;
-            const end = start + 7;
+            const rowLength = Math.min(7, Math.max(0, maxFoul - start));
             return (
-              <div key={rowIndex} className="flex gap-1 justify-center w-full">
-                {[...Array(maxFoul)].slice(start, end).map((_, idx) => {
+              <div
+                key={rowIndex}
+                className="grid gap-1 w-full"
+                style={{ gridTemplateColumns: `repeat(${rowLength}, minmax(0, 1fr))` }}
+              >
+                {Array.from({ length: rowLength }).map((_, idx) => {
                   const globalIdx = start + idx;
                   return (
                     <div
                       key={globalIdx}
-                      className={`w-8 sm:w-12 md:w-16 lg:w-20 h-3 sm:h-4 rounded-full border ${
+                      className={`h-3 sm:h-4 rounded-full border w-full ${
                         globalIdx < fouls
                           ? "bg-yellow-400 border-yellow-600"
                           : "border-gray-400"
                       }`}
-                    ></div>
+                    />
                   );
                 })}
               </div>
