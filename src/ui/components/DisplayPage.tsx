@@ -342,7 +342,7 @@ export default function DisplayPage() {
 
   return (
     <div className="h-screen bg-black text-white flex flex-col montserrat-regular select-none p-1 md:p-2">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-1 md:gap-2 flex-grow min-h-0">
+  <div className="grid grid-cols-[1fr_minmax(260px,0.8fr)_1fr] md:grid-cols-[1fr_minmax(300px,0.75fr)_1fr] lg:grid-cols-[1fr_minmax(360px,0.7fr)_1fr] xl:grid-cols-[1fr_minmax(420px,0.65fr)_1fr] items-stretch gap-1 md:gap-2 flex-grow min-h-0">
         {/* Kolom Kiri: Pemain 1 */}
         <div
           className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out min-w-0 ${
@@ -406,34 +406,46 @@ export default function DisplayPage() {
         {/* Kolom Tengah: Timer & Tatami */}
         {/* --- PERUBAHAN 2: Padding horizontal (px) dikecilkan agar kolom lebih ramping --- */}
         <div
-          className={`grid grid-rows-3 h-full p-2 px-2 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 ${
+          className={`grid grid-rows-3 h-full p-2 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 min-w-0 overflow-hidden ${
             data.gameEnded ? "opacity-0" : "opacity-100"
           }`}
         >
-          <div className="text-center self-start justify-self-center">
-            <div className="text-4xl lg:text-6xl font-bold text-gray-300 tracking-widest montserrat-bold">
+      <div className="text-center self-start justify-self-center px-1 min-w-0">
+            <div
+        className="font-bold text-gray-300 tracking-widest montserrat-bold truncate"
+        style={{ fontSize: "clamp(1.2rem, 3vw, 2.75rem)" }}
+            >
               {data.tatamiLabel || "TATAMI"}
             </div>
-            <div className="karantina-regular text-8xl lg:text-[9rem] text-white -mt-2">
+            <div
+        className="karantina-regular text-white -mt-1"
+        style={{ fontSize: "clamp(2.6rem, 8.5vw, 6.5rem)" }}
+            >
               {data.tatamiNumber || "1"}
             </div>
           </div>
 
-          <div className="flex flex-col items-center place-self-center">
-            <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-5 py-3 md:px-8 md:py-5">
-              <h2 className="font-mono font-bold tabular-nums leading-none text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] flex items-baseline justify-center">
-                <span>{mainTimeDisplay}</span>
+          <div className="flex flex-col items-center place-self-center w-full min-w-0">
+            <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-4 py-2.5 md:px-6 md:py-4 max-w-full">
+              <h2
+                className="font-mono font-bold tabular-nums leading-none flex items-center justify-center max-w-full"
+                style={{ fontSize: "clamp(2.1rem, 6.8vw, 4.5rem)" }}
+              >
+                <span className="whitespace-nowrap">{mainTimeDisplay}</span>
                 <span
-                  className="text-[3rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.5rem] tracking-tight"
-                  style={{ marginLeft: "0.1em" }}
+                  className="tracking-tight whitespace-nowrap"
+                  style={{ marginLeft: "0.15em", fontSize: "clamp(1.35rem, 4.2vw, 2.9rem)" }}
                 >
                   :{centisecondsDisplay}
                 </span>
               </h2>
             </div>
             {data.matchLabel && (
-              // --- PERUBAHAN 3: Ukuran font Match Label diperbesar ---
-              <p className="montserrat font-bold text-xl md:text-3xl lg:text-5xl text-yellow-400 tracking-widest mt-3 uppercase text-center">
+              <p
+                className="montserrat font-bold text-yellow-400 tracking-wider mt-2 uppercase text-center px-2 truncate w-full"
+                style={{ fontSize: "clamp(1.05rem, 2.9vw, 2.5rem)" }}
+                title={data.matchLabel}
+              >
                 {data.matchLabel}
               </p>
             )}

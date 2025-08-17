@@ -701,14 +701,14 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleNewGameFromTimerOrButton}
-                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white border border-sky-700"
+                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
                   title="Mulai permainan baru (ubah pengaturan)"
                 >
                   Main
                 </button>
                 <button
                   onClick={handleRematch}
-                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-700"
+                  className="px-3 py-1.5 rounded-md text-sm font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
                   title="Rematch dengan pengaturan yang sama"
                 >
                   Rematch
@@ -732,7 +732,7 @@ export default function App() {
                 ) : (
                   <>
                     <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl montserrat-extrabold font-extrabold mb-0.5 sm:mb-1 tracking-wide">
-                      HASIL SERI!
+                      HANTEI
                     </p>
                     <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300/90 montserrat-medium">
                       {endReason}
@@ -950,7 +950,7 @@ export default function App() {
       <div className="relative w-full h-full px-2 sm:px-3 md:px-4 pb-4">
         {!gameEnded && <FloatingButton />}
         {!gameEnded && <FullscreenToggleButton />}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(320px,420px)_1fr] gap-4 md:gap-6 items-stretch w-full h-full max-h-full">
+  <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(320px,420px)_1fr] gap-4 md:gap-6 items-stretch w-full h-full max-h-full">
           {/* Kolom Pemain 1 */}
           <div className="flex min-h-0">
             <PlayerCard
