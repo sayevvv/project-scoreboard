@@ -342,7 +342,7 @@ export default function DisplayPage() {
 
   return (
     <div className="h-screen bg-black text-white flex flex-col montserrat-regular select-none p-1 md:p-2">
-  <div className="grid grid-cols-[1fr_minmax(260px,0.8fr)_1fr] md:grid-cols-[1fr_minmax(300px,0.75fr)_1fr] lg:grid-cols-[1fr_minmax(360px,0.7fr)_1fr] xl:grid-cols-[1fr_minmax(420px,0.65fr)_1fr] items-stretch gap-1 md:gap-2 flex-grow min-h-0">
+  <div className="grid grid-cols-[1fr_minmax(260px,0.65fr)_1fr] md:grid-cols-[1fr_minmax(300px,0.62fr)_1fr] lg:grid-cols-[1fr_minmax(360px,0.6fr)_1fr] xl:grid-cols-[1fr_minmax(420px,0.55fr)_1fr] items-stretch gap-0.5 md:gap-1.5 flex-grow min-h-0">
         {/* Kolom Kiri: Pemain 1 */}
         <div
           className={`flex flex-col justify-between w-full h-full transition-all duration-500 ease-in-out min-w-0 ${
@@ -357,7 +357,7 @@ export default function DisplayPage() {
         >
           <div className="flex-grow flex flex-col min-h-0">
             <div
-              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}
+              className={`montserrat flex flex-col items-center justify-center w-full p-2 md:p-2.5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-blue-400`}
             >
               <h2
                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
@@ -375,6 +375,7 @@ export default function DisplayPage() {
 
             <div
               className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-blue-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-blue-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
+              style={{ aspectRatio: "1 / 1" }}
             >
               {data.isFirstScorer1 && !data.gameEnded && (
                 <div
@@ -389,7 +390,7 @@ export default function DisplayPage() {
               <div
                 className="karantina-regular text-white leading-none my-auto select-none"
                 style={{
-                  fontSize: "clamp(6rem, 25vw, 32rem)",
+                  fontSize: "clamp(10rem, max(32vw, 44vh), 52rem)",
                   textShadow:
                     "0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(255,80,80,0.5)",
                 }}
@@ -398,7 +399,7 @@ export default function DisplayPage() {
               </div>
             </div>
           </div>
-          <div className="w-full flex-shrink-0 pt-2">
+          <div className="w-full flex-shrink-0 pt-1">
             {renderFoulIndicators(data.foul1, data.maxFoul, "p1")}
           </div>
         </div>
@@ -406,7 +407,7 @@ export default function DisplayPage() {
         {/* Kolom Tengah: Timer & Tatami */}
         {/* --- PERUBAHAN 2: Padding horizontal (px) dikecilkan agar kolom lebih ramping --- */}
         <div
-          className={`grid grid-rows-3 h-full p-2 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-2 min-w-0 overflow-hidden ${
+          className={`grid grid-rows-3 h-full p-1 bg-gray-900/70 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-xl transition-opacity duration-500 mx-1 min-w-0 overflow-hidden ${
             data.gameEnded ? "opacity-0" : "opacity-100"
           }`}
         >
@@ -426,7 +427,7 @@ export default function DisplayPage() {
           </div>
 
           <div className="flex flex-col items-center place-self-center w-full min-w-0">
-            <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-4 py-2.5 md:px-6 md:py-4 max-w-full">
+            <div className="flex flex-col items-center bg-black/60 border-2 border-white/20 rounded-3xl shadow-2xl shadow-black/50 px-3 py-2 md:px-5 md:py-3.5 max-w-full">
               <h2
                 className="font-mono font-bold tabular-nums leading-none flex items-center justify-center max-w-full"
                 style={{ fontSize: "clamp(2.1rem, 6.8vw, 4.5rem)" }}
@@ -442,7 +443,7 @@ export default function DisplayPage() {
             </div>
             {data.matchLabel && (
               <p
-                className="montserrat font-bold text-yellow-400 tracking-wider mt-2 uppercase text-center px-2 truncate w-full"
+                className="montserrat font-bold text-yellow-400 tracking-wider mt-1.5 uppercase text-center px-2 truncate w-full"
                 style={{ fontSize: "clamp(1.05rem, 2.9vw, 2.5rem)" }}
                 title={data.matchLabel}
               >
@@ -468,7 +469,7 @@ export default function DisplayPage() {
         >
           <div className="flex-grow flex flex-col min-h-0">
             <div
-              className={`montserrat flex flex-col items-center justify-center w-full p-3 bg-gradient-to-l from-red-600 to-red-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-red-400`}
+              className={`montserrat flex flex-col items-center justify-center w-full p-2 md:p-2.5 bg-gradient-to-l from-red-600 to-red-800 rounded-t-lg shadow-lg flex-shrink-0 border-b-2 border-red-400`}
             >
               <h2
                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl montserrat-bold font-bold text-center w-full truncate"
@@ -485,6 +486,7 @@ export default function DisplayPage() {
 
             <div
               className={`relative flex flex-col items-center justify-center border-x-2 border-b-2 border-red-800/50 rounded-b-lg shadow-lg bg-gradient-to-tr from-black/50 via-red-500/60 to-black/50 text-white w-full flex-grow min-h-0`}
+              style={{ aspectRatio: "1 / 1" }}
             >
               {data.isFirstScorer2 && !data.gameEnded && (
                 <div
@@ -499,7 +501,7 @@ export default function DisplayPage() {
               <div
                 className="karantina-regular text-white leading-none my-auto select-none"
                 style={{
-                  fontSize: "clamp(6rem, 25vw, 32rem)",
+                  fontSize: "clamp(10rem, max(32vw, 44vh), 52rem)",
                   textShadow:
                     "0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(80,80,255,0.5)",
                 }}
@@ -508,7 +510,7 @@ export default function DisplayPage() {
               </div>
             </div>
           </div>
-          <div className="w-full flex-shrink-0 pt-2">
+          <div className="w-full flex-shrink-0 pt-1">
             {renderFoulIndicators(data.foul2, data.maxFoul, "p2")}
           </div>
         </div>
